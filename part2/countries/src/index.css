@@ -1,0 +1,12 @@
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; 
+    margin: 20px;
+  }
+  
+  .flex-item {
+    margin: 10px;
+    text-align: center; 
+  }
+  
