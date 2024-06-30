@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Names, Filter, PersonForm, Persons } from './components/Note';
 import Notification from './components/Notification';
 import notes from './services/notes'; 
