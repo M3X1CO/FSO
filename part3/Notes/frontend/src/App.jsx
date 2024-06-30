@@ -80,8 +80,11 @@ const App = () => {
       </ul>
       <form onSubmit={addNote}>
       <input
+          id="noteInput"
+          name="note"
           value={newNote}
           onChange={handleNoteChange}
+          autoComplete="off"
         />
         <button type="submit">save</button>
       </form>
