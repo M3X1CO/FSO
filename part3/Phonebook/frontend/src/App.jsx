@@ -52,7 +52,7 @@ const App = () => {
           }, 4000);
         })
         .catch(error => {
-          setErrorMessage(`Information of ${newName} has already been deleted from the server`);
+          setErrorMessage(error.response?.data?.error || `Information of ${newName} has already been deleted from the server`);
           setTimeout(() => {
             setErrorMessage(null);
           }, 4000);
@@ -68,7 +68,7 @@ const App = () => {
           }, 4000);
         })
         .catch(error => {
-          setErrorMessage(`Error adding ${newName}`);
+          setErrorMessage(error.response?.data?.error || `Error adding ${newName}`);
           setTimeout(() => {
             setErrorMessage(null);
           }, 4000);
@@ -94,7 +94,7 @@ const App = () => {
           }, 4000);
         })
         .catch(error => {
-          setErrorMessage(`Error deleting ${person.name}`);
+          setErrorMessage(error.response?.data?.error || `Error deleting ${person.name}`);
           setTimeout(() => {
             setErrorMessage(null);
           }, 4000);
