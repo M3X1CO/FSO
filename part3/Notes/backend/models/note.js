@@ -1,25 +1,28 @@
 const mongoose = require('mongoose')
+require('dotenv').config()
 
 mongoose.set('strictQuery', false)
 
-const url = process.env.MONGODB_URI
+const url = process.env.MONGODB_URL
 
-console.log('connecting to', url)
+if (!url) {
+  console.error('Error: MONGODB_URL env variable is not set.')
+  process.exit(1)
+}
+
+console.log('connecting to MongoDB')
 
 mongoose.connect(url)
-  .then(() => {
+
+  .then(result => {
     console.log('connected to MongoDB')
   })
-  .catch((error) => {
+  .catch(error => {
     console.log('error connecting to MongoDB:', error.message)
   })
 
 const noteSchema = new mongoose.Schema({
-  content: {
-    type: String,
-    minlength: 5,
-    required: true
-  },
+  content: String,
   important: Boolean,
 })
 
@@ -31,4 +34,6 @@ noteSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('Note', noteSchema)
+const Note = mongoose.model('Note', noteSchema, 'notes')
+
+module.exports = Note
