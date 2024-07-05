@@ -1,95 +1,96 @@
-import { useState, useEffect } from 'react'
-import blogService from './services/blogs'
+import { useState, useEffect } from 'react';
+import blogService from './services/blogs';
+import './App.css';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newTitle, setNewTitle] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [newVotes, setNewVotes] = useState('')
-  const [expandedBlogId, setExpandedBlogId] = useState(null)
+  const [blogs, setBlogs] = useState([]);
+  const [newAuthor, setNewAuthor] = useState('');
+  const [newTitle, setNewTitle] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+  const [newVotes, setNewVotes] = useState('');
+  const [expandedBlogId, setExpandedBlogId] = useState(null);
 
   useEffect(() => {
     blogService
       .getAll()
       .then(initialBlogs => {
-        setBlogs(initialBlogs)
-      })
-  }, [])
+        setBlogs(initialBlogs);
+      });
+  }, []);
 
   const addBlog = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const blogObject = {
       author: newAuthor,
       title: newTitle,
       url: newUrl,
       votes: newVotes
-    }
-  
+    };
+
     blogService
       .create(blogObject)
-        .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setNewAuthor('')
-        setNewTitle('')
-        setNewUrl('')
-        setNewVotes('')
-      })
-  }
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog));
+        setNewAuthor('');
+        setNewTitle('');
+        setNewUrl('');
+        setNewVotes('');
+      });
+  };
 
   const toggleBlogDetails = (id) => {
     if (expandedBlogId === id) {
-      setExpandedBlogId(null)
+      setExpandedBlogId(null);
     } else {
-      setExpandedBlogId(id)
+      setExpandedBlogId(id);
     }
-  }
+  };
 
   return (
     <div>
-      <h1>Save yer Blogs</h1>    
+      <h1>Blogs</h1>
       <form onSubmit={addBlog}>
         <div>
           <label htmlFor="authorInput">Author:</label>
           <input
-              id="authorInput"
-              name="author"
-              value={newAuthor}
-              onChange={({ target }) => setNewAuthor(target.value)}
-              autoComplete="off"
-            />
+            id="authorInput"
+            name="author"
+            value={newAuthor}
+            onChange={({ target }) => setNewAuthor(target.value)}
+            autoComplete="off"
+          />
         </div>
         <div>
           <label htmlFor="titleInput">Title:</label>
           <input
-              id="titleInput"
-              name="title"
-              value={newTitle}
-              onChange={({ target }) => setNewTitle(target.value)}
-              autoComplete="off"
-            />
+            id="titleInput"
+            name="title"
+            value={newTitle}
+            onChange={({ target }) => setNewTitle(target.value)}
+            autoComplete="off"
+          />
         </div>
         <div>
           <label htmlFor="urlInput">URL:</label>
           <input
-              id="urlInput"
-              name="url"
-              value={newUrl}
-              onChange={({ target }) => setNewUrl(target.value)}
-              autoComplete="off"
-            />
+            id="urlInput"
+            name="url"
+            value={newUrl}
+            onChange={({ target }) => setNewUrl(target.value)}
+            autoComplete="off"
+          />
         </div>
         <div>
           <label htmlFor="votesInput">Votes:</label>
           <input
-              id="votesInput"
-              name="votes"
-              value={newVotes}
-              onChange={({ target }) => setNewVotes(target.value)}
-              autoComplete="off"
-            />
+            id="votesInput"
+            name="votes"
+            value={newVotes}
+            onChange={({ target }) => setNewVotes(target.value)}
+            autoComplete="off"
+          />
         </div>
-        <button type="submit">save</button>
+        <button type="submit">Save</button>
       </form>
 
       <h2>Blog List</h2>
@@ -110,7 +111,7 @@ const App = () => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
