@@ -7,6 +7,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [newVotes, setNewVotes] = useState('')
+  const [expandedBlogId, setExpandedBlogId] = useState(null)
 
   useEffect(() => {
     blogService
@@ -34,6 +35,14 @@ const App = () => {
         setNewUrl('')
         setNewVotes('')
       })
+  }
+
+  const toggleBlogDetails = (id) => {
+    if (expandedBlogId === id) {
+      setExpandedBlogId(null)
+    } else {
+      setExpandedBlogId(id)
+    }
   }
 
   return (
@@ -86,7 +95,18 @@ const App = () => {
       <h2>Blog List</h2>
       <ul>
         {blogs.map(blog => (
-          <li key={blog.id}>{blog.title} by {blog.author}</li>
+          <li key={blog.id}>
+            {blog.title} by {blog.author}
+            <button onClick={() => toggleBlogDetails(blog.id)}>
+              {expandedBlogId === blog.id ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedBlogId === blog.id && (
+              <div>
+                <p>URL: {blog.url}</p>
+                <p>Votes: {blog.votes}</p>
+              </div>
+            )}
+          </li>
         ))}
       </ul>
     </div>
