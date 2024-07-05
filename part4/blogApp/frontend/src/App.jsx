@@ -38,45 +38,57 @@ const App = () => {
 
   return (
     <div>
-      <h1>Blogs</h1>    
+      <h1>Save yer Blogs</h1>    
       <form onSubmit={addBlog}>
-      <div>
-        <input
-            id="blogInput"
-            name="blog"
-            value={newAuthor}
-            autoComplete="off"
-          />
-          <button type="submit">save</button>
-      </div>
-      <div>
-        <input
-            id="blogInput"
-            name="blog"
-            value={newTitle}
-            autoComplete="off"
-          />
-          <button type="submit">save</button>
-      </div>
-      <div>
-        <input
-            id="blogInput"
-            name="blog"
-            value={newUrl}
-            autoComplete="off"
-          />
-          <button type="submit">save</button>
-      </div>
-      <div>
-        <input
-            id="blogInput"
-            name="blog"
-            value={newVotes}
-            autoComplete="off"
-          />
-          <button type="submit">save</button>
-      </div>
+        <div>
+          <label htmlFor="authorInput">Author:</label>
+          <input
+              id="authorInput"
+              name="author"
+              value={newAuthor}
+              onChange={({ target }) => setNewAuthor(target.value)}
+              autoComplete="off"
+            />
+        </div>
+        <div>
+          <label htmlFor="titleInput">Title:</label>
+          <input
+              id="titleInput"
+              name="title"
+              value={newTitle}
+              onChange={({ target }) => setNewTitle(target.value)}
+              autoComplete="off"
+            />
+        </div>
+        <div>
+          <label htmlFor="urlInput">URL:</label>
+          <input
+              id="urlInput"
+              name="url"
+              value={newUrl}
+              onChange={({ target }) => setNewUrl(target.value)}
+              autoComplete="off"
+            />
+        </div>
+        <div>
+          <label htmlFor="votesInput">Votes:</label>
+          <input
+              id="votesInput"
+              name="votes"
+              value={newVotes}
+              onChange={({ target }) => setNewVotes(target.value)}
+              autoComplete="off"
+            />
+        </div>
+        <button type="submit">save</button>
       </form>
+
+      <h2>Blog List</h2>
+      <ul>
+        {blogs.map(blog => {
+          <li key={blog.id}>{blog.title} by {blog.author}</li>
+        })}
+      </ul>
     </div>
   )
 }
