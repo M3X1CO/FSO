@@ -8,7 +8,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
-    "deploy:full": "npm update && (cd ../frontend && npm install && cd ../backend && npm install && npm run build:ui && cd ../../ && git add . && git commit -m uibuild && git push)",
+    "deploy:full": "npm update && (cd ../frontend && npm install && cd ../backend && npm install && npm run build:ui && cd ../../../ && git add . && git commit -m uibuild && git push)",
     "lint": "eslint ."
   },
   "author": "",
@@ -20,7 +20,6 @@
     "mongoose": "^8.1.1"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.5.0",
     "@stylistic/eslint-plugin-js": "^1.6.1",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.3"
