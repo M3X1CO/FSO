@@ -85,9 +85,9 @@ const App = () => {
 
       <h2>Blog List</h2>
       <ul>
-        {blogs.map(blog => {
+        {blogs.map(blog => (
           <li key={blog.id}>{blog.title} by {blog.author}</li>
-        })}
+        ))}
       </ul>
     </div>
   )
