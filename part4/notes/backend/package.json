@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
+    "start": "cross-env NODE_ENV=development node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test node --test",
     "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
     "deploy:full": "npm update && (cd ../frontend && npm install && cd ../backend && npm install && npm run build:ui && cd ../../../ && git add . && git commit -m uibuild && git push)",
-    "lint": "eslint .",
-    "test": "node --test"
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,9 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-js": "^1.6.1",
+    "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "supertest": "^7.0.0"
   }
 }
