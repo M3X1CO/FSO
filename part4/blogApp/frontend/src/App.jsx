@@ -96,12 +96,12 @@ const App = () => {
       <h2>Blog List</h2>
       <ul>
         {blogs.map(blog => (
-          <li key={blog.id}>
+          <li key={blog._id}>
             {blog.title} by {blog.author}
-            <button onClick={() => toggleBlogDetails(blog.id)}>
-              {expandedBlogId === blog.id ? 'Hide Details' : 'Show Details'}
+            <button onClick={() => toggleBlogDetails(blog._id)}>
+              {expandedBlogId === blog._id ? 'Hide Details' : 'Show Details'}
             </button>
-            {expandedBlogId === blog.id && (
+            {expandedBlogId === blog._id && (
               <div>
                 <p>URL: {blog.url}</p>
                 <p>Votes: {blog.votes}</p>
