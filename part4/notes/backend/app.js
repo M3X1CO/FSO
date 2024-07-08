@@ -9,14 +9,14 @@ const mongoose = require('mongoose')
 
 mongoose.set('strictQuery', false)
 
-logger.info('connecting to db')
+logger.info('Connecting to MongoDB')
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => {
-    logger.info('connected to MongoDB')
+    logger.info('Connected to MongoDB')
   })
   .catch((error) => {
-    logger.error('error connection to MongoDB:', error.message)
+    logger.error('Error connection to MongoDB:', error.message)
   })
 
 app.use(cors())
