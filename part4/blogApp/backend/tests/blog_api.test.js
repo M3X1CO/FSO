@@ -36,7 +36,7 @@ test('Find if author is in DB', async () => {
     assert.strictEqual(authors.includes('helper1'), true)
 })
 
-test('A valid blog can be added ', async () => {
+test('A valid blog can be added', async () => {
     const newBlog = {
         author: 'testAuth1',
         title: 'testTitle1',
