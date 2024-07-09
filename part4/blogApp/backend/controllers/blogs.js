@@ -24,13 +24,13 @@ blogsRouter.get('/:id', async (request, response, next) => {
 });
 
 blogsRouter.post('/', async (request, response, next) => {
-  const body = request.body;
+  const { author, title, url, votes } = request.body;
 
   const blog = new Blog({
-    author: body.author,
-    title: body.title,
-    url: body.url,
-    votes: body.votes
+    author: author,
+    title: title,
+    url: url,
+    votes: votes
   });
 
   try {
@@ -51,13 +51,13 @@ blogsRouter.delete('/:id', async (request, response, next) => {
 });
 
 blogsRouter.put('/:id', async (request, response, next) => {
-  const body = request.body;
+  const { author, title, url, votes } = request.body;
 
   const blog = {
-    author: body.author,
-    title: body.title,
-    url: body.url,
-    votes: body.votes
+    author: author,
+    title: title,
+    url: url,
+    votes: votes
   };
 
   try {
