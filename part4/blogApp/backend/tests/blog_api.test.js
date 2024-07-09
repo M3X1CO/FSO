@@ -10,10 +10,11 @@ const Blog = require('../models/blog')
   
 beforeEach(async () => {
     await Blog.deleteMany({})
-    let blogObject = new Blog(helper.initialBlogs[0])
-    await blogObject.save()
-    blogObject = new Blog(helper.initialBlogs[1])
-    await blogObject.save()
+  
+    for (let blog of helper.initialBlogs) {
+      let blogObject = new Blog(blog)
+      await blogObject.save()
+    }
 })
 
 test('Blogs are returned as json', async () => {
@@ -24,7 +25,8 @@ test('Blogs are returned as json', async () => {
 })
 
 test('There are two blogs', async () => {
-    const response = await helper.blogsInDb()  
+    const response = await helper.blogsInDb() 
+    // console.log(response, helper.initialBlogs.length) 
     assert.strictEqual(response.length, helper.initialBlogs.length)
 })
   
@@ -55,7 +57,7 @@ test('A valid blog can be added ', async () => {
     assert(authors.includes('testAuth1'))
 })
 
-test('Blog without content is not added', async () => {
+test('Blog without title or url is not added', async () => {
     const newBlog = {
       author: 'fyodor'
     }
@@ -85,7 +87,7 @@ test('A specific blog can be viewed', async () => {
     assert.deepStrictEqual(resultBlog.body, blogToView)
   })
   
-  test('a blog can be deleted', async () => {
+  test('A blog can be deleted', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
   
@@ -100,6 +102,37 @@ test('A specific blog can be viewed', async () => {
   
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
   })
+
+test('Blog posts are returned as json and have an id property instead of _id', async () => {
+    const response = await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const blog = response.body[0]
+    assert(blog.id, 'The blog should have an id property')
+    assert.strictEqual(blog._id, undefined, 'The blog should not have an _id property')
+})
+
+test('Blog without votes property defaults to 0', async () => {
+    const newBlog = {
+        author: 'testAuthor',
+        title: 'testTitle',
+        url: 'testUrl'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const addedBlog = response.body.find(blog => blog.author === 'testAuthor')
+    assert.strictEqual(addedBlog.votes, 0, 'The votes property should default to 0')
+})
+
 
 after(async () => {
   await mongoose.connection.close()

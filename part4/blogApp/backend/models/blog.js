@@ -14,8 +14,8 @@ const blogSchema = new mongoose.Schema({
     required: true
   },
   votes: {
-    type: String,
-    required: true
+    type: Number,
+    default: 0
   }
 })
 
