@@ -8,7 +8,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newVotes, setNewVotes] = useState('');
-  const [expandedBlogId, setExpandedBlogId] = useState(null);
+  const [expandedBlogIds, setExpandedBlogIds] = useState({});
 
   useEffect(() => {
     blogService
@@ -38,13 +38,12 @@ const App = () => {
       });
   };
 
-  const toggleBlogDetails = (id) => {
-    if (expandedBlogId === id) {
-      setExpandedBlogId(null);
-    } else {
-      setExpandedBlogId(id);
-    }
-  };
+  const toggleBlogDetails = (blogId) => {
+    setExpandedBlogIds(prevState => ({
+      ...prevState,
+      [blogId]: !prevState[blogId],
+    }));
+  };  
 
   return (
     <div>
@@ -92,16 +91,16 @@ const App = () => {
         </div>
         <button type="submit">Save</button>
       </form>
-
+  
       <h2>Blog List</h2>
       <ul>
         {blogs.map(blog => (
           <li key={blog._id}>
             {blog.title} by {blog.author}
             <button onClick={() => toggleBlogDetails(blog._id)}>
-              {expandedBlogId === blog._id ? 'Hide Details' : 'Show Details'}
+              {expandedBlogIds[blog._id] ? 'Hide Details' : 'Show Details'}
             </button>
-            {expandedBlogId === blog._id && (
+            {expandedBlogIds[blog._id] && (
               <div>
                 <p>URL: {blog.url}</p>
                 <p>Votes: {blog.votes}</p>
@@ -112,6 +111,6 @@ const App = () => {
       </ul>
     </div>
   );
-};
+}  
 
 export default App;
