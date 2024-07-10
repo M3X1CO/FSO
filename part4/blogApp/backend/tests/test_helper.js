@@ -1,18 +1,18 @@
 const Blog = require('../models/blog')
 
 const initialBlogs = [
-    {
-        author: 'helper1',
-        title: 'helper2',
-        url: 'helper3',
-        votes: '4'
-    },
-    {
-        author: 'helper5',
-        title: 'helper6',
-        url: 'helper7',
-        votes: '8'
-    },
+  {
+    author: 'helper1',
+    title: 'helper2',
+    url: 'helper3',
+    votes: '4'
+  },
+  {
+    author: 'helper5',
+    title: 'helper6',
+    url: 'helper7',
+    votes: '8'
+  },
 ]
 
 const nonExistingId = async () => {

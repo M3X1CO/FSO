@@ -63,7 +63,7 @@
 //     const blogs = [];
 
 //     const total = listHelper.totalVotes(blogs);
-//     assert.strictEqual(total, 0); 
+//     assert.strictEqual(total, 0);
 
 //     await disconnectFromDB();
 //     console.log(`Testing sum of empty list`)
@@ -215,7 +215,7 @@
 
 //     const blogs = await Blog.find({});
 //     const result = listHelper.mostLikes(blogs);
-    
+
 //     const likesByAuthor = blogs.reduce((acc, blog) => {
 //       acc[blog.author] = (acc[blog.author] || 0) + Number(blog.votes);
 //       return acc;
