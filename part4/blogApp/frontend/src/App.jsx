@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import blogService from './services/blogs';
 import './App.css';
 
@@ -43,7 +43,7 @@ const App = () => {
       ...prevState,
       [blogId]: !prevState[blogId],
     }));
-  };  
+  };
 
   return (
     <div>
@@ -91,7 +91,7 @@ const App = () => {
         </div>
         <button type="submit">Save</button>
       </form>
-  
+
       <h2>Blog List</h2>
       <ul>
         {blogs.map(blog => (
@@ -111,6 +111,6 @@ const App = () => {
       </ul>
     </div>
   );
-}  
+};
 
 export default App;
