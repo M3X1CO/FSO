@@ -8,7 +8,7 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newVotes, setNewVotes] = useState('');
-  const [expandedBlogIds, setExpandedBlogIds] = useState({});
+  const [expandedBlogId, setExpandedBlogId] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then(initialBlogs => {
@@ -16,7 +16,7 @@ const App = () => {
     });
   }, []);
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault();
     const blogObject = {
       author: newAuthor,
@@ -25,20 +25,20 @@ const App = () => {
       votes: newVotes,
     };
 
-    blogService.create(blogObject).then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog));
-      setNewAuthor('');
-      setNewTitle('');
-      setNewUrl('');
-      setNewVotes('');
-    });
+    const returnedBlog = await blogService.create(blogObject);
+    setBlogs(blogs.concat(returnedBlog));
+    setNewAuthor('');
+    setNewTitle('');
+    setNewUrl('');
+    setNewVotes('');
   };
 
   const toggleBlogDetails = (blogId) => {
-    setExpandedBlogIds(prevState => ({
-      ...prevState,
-      [blogId]: !prevState[blogId],
-    }));
+    if (expandedBlogId === blogId) {
+      setExpandedBlogId(null); // Close details if already open
+    } else {
+      setExpandedBlogId(blogId); // Open details for the selected blog
+    }
   };
 
   return (
@@ -94,9 +94,9 @@ const App = () => {
           <li key={blog._id}>
             {blog.title} by {blog.author}
             <button onClick={() => toggleBlogDetails(blog._id)}>
-              {expandedBlogIds[blog._id] ? 'Hide Details' : 'Show Details'}
+              {expandedBlogId === blog._id ? 'Hide Details' : 'Show Details'}
             </button>
-            {expandedBlogIds[blog._id] && (
+            {expandedBlogId === blog._id && (
               <div>
                 <p>URL: {blog.url}</p>
                 <p>Votes: {blog.votes}</p>
