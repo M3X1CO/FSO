@@ -11,11 +11,9 @@ const App = () => {
   const [expandedBlogIds, setExpandedBlogIds] = useState({});
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(initialBlogs => {
-        setBlogs(initialBlogs);
-      });
+    blogService.getAll().then(initialBlogs => {
+      setBlogs(initialBlogs);
+    });
   }, []);
 
   const addBlog = (event) => {
@@ -24,18 +22,16 @@ const App = () => {
       author: newAuthor,
       title: newTitle,
       url: newUrl,
-      votes: newVotes
+      votes: newVotes,
     };
 
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog));
-        setNewAuthor('');
-        setNewTitle('');
-        setNewUrl('');
-        setNewVotes('');
-      });
+    blogService.create(blogObject).then(returnedBlog => {
+      setBlogs(blogs.concat(returnedBlog));
+      setNewAuthor('');
+      setNewTitle('');
+      setNewUrl('');
+      setNewVotes('');
+    });
   };
 
   const toggleBlogDetails = (blogId) => {
