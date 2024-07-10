@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-const dummy = () => {
+const dummy = (blogs) => {
   return 1
 }
 
