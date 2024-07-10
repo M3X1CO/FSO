@@ -34,8 +34,16 @@ const App = () => {
   };
 
   const toggleBlogDetails = (blogId) => {
+    console.log('Clicked blog id:', blogId);
     setExpandedBlogId(expandedBlogId === blogId ? null : blogId);
   };
+
+  {expandedBlogId === blog._id && (
+    <div>
+      <p>URL: {blog.url}</p>
+      <p>Votes: {blog.votes}</p>
+    </div>
+  )}
 
   return (
     <div>
@@ -90,7 +98,7 @@ const App = () => {
           <li key={blog._id}>
             {blog.title} by {blog.author}
             <button onClick={() => toggleBlogDetails(blog._id)}>
-              {expandedBlogId === blog._id ? 'Hide Details' : 'Show Details'}
+              {/* ... */}
             </button>
             {expandedBlogId === blog._id && (
               <div>
