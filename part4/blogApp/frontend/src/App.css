@@ -1,87 +1,25 @@
-/* General styles */
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-.app-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-/* Form styles */
 form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.form-group {
-  display: flex;
+form div {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   align-items: center;
 }
 
-.form-group label {
-  width: 100px;
-}
-
-input[type="text"],
-input[type="url"],
-input[type="number"] {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  flex: 1;
-}
-
-button[type="submit"] {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: #fff;
-  cursor: pointer;
-}
-
-/* Blog list styles */
-.blog-list {
-  list-style: none;
+ul {
+  list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
-.blog-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding: 0.5rem 1rem;
+ul li {
+  margin-bottom: 1rem;
 }
 
-.blog-info {
-  flex: 1;
-}
-
-.blog-info h3 {
-  margin: 0;
-  font-weight: bold;
-}
-
-.toggle-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #ccc;
-  color: #000;
-  cursor: pointer;
-}
-
-/* Blog details styles */
-.blog-details {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+ul li button {
+  margin-left: 1rem;
 }
