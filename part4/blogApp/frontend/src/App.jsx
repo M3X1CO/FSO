@@ -34,11 +34,7 @@ const App = () => {
   };
 
   const toggleBlogDetails = (blogId) => {
-    if (expandedBlogId === blogId) {
-      setExpandedBlogId(null); // Close details if already open
-    } else {
-      setExpandedBlogId(blogId); // Open details for the selected blog
-    }
+    setExpandedBlogId(expandedBlogId === blogId ? null : blogId);
   };
 
   return (
