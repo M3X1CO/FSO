@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import blogService from './services/blogs'; // Assuming blogService handles API calls
+import { useState, useEffect } from 'react';
+import blogService from './services/blogs';
+import './App.css';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -10,39 +11,38 @@ const App = () => {
   const [expandedBlogId, setExpandedBlogId] = useState(null);
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      const initialBlogs = await blogService.getAll();
-      setBlogs(initialBlogs);
-    };
-    fetchBlogs();
+    blogService
+      .getAll()
+      .then(initialBlogs => {
+        setBlogs(initialBlogs);
+      });
   }, []);
 
-  const addBlog = async (event) => {
+  const addBlog = (event) => {
     event.preventDefault();
     const blogObject = {
       author: newAuthor,
       title: newTitle,
       url: newUrl,
-      votes: newVotes,
+      votes: newVotes
     };
 
-    const returnedBlog = await blogService.create(blogObject);
-    setBlogs(blogs.concat(returnedBlog));
-    setNewAuthor('');
-    setNewTitle('');
-    setNewUrl('');
-    setNewVotes('');
-  };
-
-  const toggleBlogDetails = (blogId) => {
-    setExpandedBlogId(expandedBlogId === blogId ? null : blogId);
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog));
+        setNewAuthor('');
+        setNewTitle('');
+        setNewUrl('');
+        setNewVotes('');
+      });
   };
 
   return (
-    <div className="app-container">
+    <div>
       <h1>Blogs</h1>
       <form onSubmit={addBlog}>
-        <div className="form-group">
+        <div>
           <label htmlFor="authorInput">Author:</label>
           <input
             id="authorInput"
@@ -52,7 +52,7 @@ const App = () => {
             autoComplete="off"
           />
         </div>
-        <div className="form-group">
+        <div>
           <label htmlFor="titleInput">Title:</label>
           <input
             id="titleInput"
@@ -62,7 +62,7 @@ const App = () => {
             autoComplete="off"
           />
         </div>
-        <div className="form-group">
+        <div>
           <label htmlFor="urlInput">URL:</label>
           <input
             id="urlInput"
@@ -72,7 +72,7 @@ const App = () => {
             autoComplete="off"
           />
         </div>
-        <div className="form-group">
+        <div>
           <label htmlFor="votesInput">Votes:</label>
           <input
             id="votesInput"
@@ -86,25 +86,10 @@ const App = () => {
       </form>
 
       <h2>Blog List</h2>
-      <ul className="blog-list">
-        {blogs.map((blog) => (
-          <li key={blog._id} className="blog-item">
-            <div className="blog-info">
-              <h3>{blog.title}</h3>
-              <p>by {blog.author}</p>
-            </div>
-            <button
-              onClick={() => toggleBlogDetails(blog._id)}
-              className="toggle-button"
-            >
-              {expandedBlogId === blog._id ? 'Hide Details' : 'Show Details'}
-            </button>
-            {expandedBlogId === blog._id && (
-              <div className="blog-details">
-                <p>URL: {blog.url}</p>
-                <p>Votes: {blog.votes}</p>
-              </div>
-            )}
+      <ul>
+        {blogs.map(blog => (
+          <li key={blog._id}>
+            {blog.title} by {blog.author}
           </li>
         ))}
       </ul>
