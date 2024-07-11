@@ -1,13 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const { getTokenFrom, verifyToken } = require('../utils/middleware')
-
-// Extracts the token
-// blogsRouter.use(getTokenFrom)
-
-// // Decodes the token
-// blogsRouter.use(verifyToken)
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -26,12 +19,7 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const { author, title, url, votes } = request.body
-  const decodedToken = request.decodedToken
-
-  const user = await User.findById(decodedToken.id)
-  if (!user) {
-    return response.status(401).json({ error: 'user not found' })
-  }
+  const user = request.user
 
   const blog = new Blog({
     author: author,
@@ -47,18 +35,19 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const decodedToken = request.decodedToken
+  const blogId = request.params.id
+  const user = request.user
 
-  const blog = await Blog.findById(request.params.id)
+  const blog = await Blog.findById(blogId)
   if (!blog) {
     return response.status(404).json({ error: 'blog not found' })
   }
 
-  if (blog.user.toString() !== decodedToken.id) {
+  if (blog.user.toString() !== user.id) {
     return response.status(401).json({ error: 'only the creator of this blog can delete' })
   }
 
-  await Blog.findByIdAndDelete(request.params.id)
+  await Blog.findByIdAndDelete(blogId)
   response.status(204).end()
 })
 

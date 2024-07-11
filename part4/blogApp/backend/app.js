@@ -29,6 +29,7 @@ app.use(middleware.requestLogger)
 
 app.use(middleware.getTokenFrom)
 app.use(middleware.verifyToken)
+app.use(middleware.userExtractor)
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
