@@ -4,10 +4,10 @@ const User = require('../models/user')
 const { getTokenFrom, verifyToken } = require('../utils/middleware')
 
 // Extracts the token
-blogsRouter.use(getTokenFrom)
+// blogsRouter.use(getTokenFrom)
 
-// Decodes the token
-blogsRouter.use(verifyToken)
+// // Decodes the token
+// blogsRouter.use(verifyToken)
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog

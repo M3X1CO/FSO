@@ -35,6 +35,10 @@ const verifyToken = (request, response, next) => {
   next()
 }
 
+const tokenExtractor = (request, response, next) => {
+  stuff
+}
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
@@ -69,5 +73,6 @@ module.exports = {
   unknownEndpoint,
   errorHandler,
   getTokenFrom,
-  verifyToken
+  verifyToken,
+  tokenExtractor
 }
