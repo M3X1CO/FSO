@@ -142,7 +142,6 @@ describe('When there is initially some notes saved', () => {
         .expect(400)
 
       const blogsAtEnd = await helper.blogsInDb()
-      // console.log('Blogs in DB after attempt to add invalid blog: ', blogsAtEnd)
 
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
@@ -209,7 +208,7 @@ describe('When there is initially some notes saved', () => {
       const usersAtStart = await helper.usersInDb()
 
       const newUser = {
-        username: 'root', // Existing username in the database
+        username: 'root', 
         name: 'Superuser',
         password: 'salainen',
       }
@@ -221,13 +220,13 @@ describe('When there is initially some notes saved', () => {
         .expect(400)
         .expect('Content-Type', /application\/json/)
 
-      console.log(result.body) // Log the response body to inspect the error message
+      console.log(result.body) 
 
-      assert(result.body.error.includes('username must be unique')) // Adjust this assertion based on the logged response
+      assert(result.body.error.includes('username must be unique')) 
 
       const usersAtEnd = await helper.usersInDb()
 
-      assert.strictEqual(usersAtEnd.length, usersAtStart.length) // No new user should be added
+      assert.strictEqual(usersAtEnd.length, usersAtStart.length) 
     })
 
     test('creation fails with proper statuscode and message if username or password is too short', async () => {
@@ -247,7 +246,7 @@ describe('When there is initially some notes saved', () => {
       assert(result.body.error.includes('username and password must be at least 3 characters long'))
 
       const users = await User.find({})
-      assert.strictEqual(users.length, 1) // Assuming only 'root' user exists initially
+      assert.strictEqual(users.length, 1) 
     })
   })
 })
