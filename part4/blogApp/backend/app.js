@@ -38,8 +38,8 @@ app.use(middleware.getTokenFrom)
 app.use(middleware.verifyToken)
 app.use(middleware.userExtractor)
 
-app.use('/api/blogs', middleware.verifyToken, middleware.userExtractor, blogsRouter)
-app.use('/api/users', middleware.verifyToken, middleware.userExtractor, usersRouter)
+app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
 app.use(middleware.unknownEndpoint)
