@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Notification from './components/Notification';
 import Footer from './components/Footer';
 import blogService from './services/blogs';
@@ -15,34 +15,26 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [blogsFetched, setBlogsFetched] = useState(false); // New state variable
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-    console.log('Retrieved loggedUserJSON:', loggedUserJSON); // Debugging log
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      console.log('Parsed user from localStorage:', user); // Debugging log
       setUser(user);
       blogService.setToken(user.token);
-      console.log('Token set in blogService:', user.token); // Debugging log
+      setIsLoggedIn(true); // User is logged in
     }
-  }, []);
+  }, []); // Only run once on mount
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const initialBlogs = await blogService.getAll();
+    if (isLoggedIn) {
+      // Fetch blogs when user logs in or when isLoggedIn changes
+      blogService.getAll().then(initialBlogs => {
         setBlogs(initialBlogs);
-        setBlogsFetched(true); // Update state to indicate blogs are fetched
-      } catch (error) {
-        console.error('Error fetching blogs:', error);
-        // Handle error or set state accordingly
-      }
-    };
-
-    fetchBlogs();
-  }, []);
+      });
+    }
+  }, [isLoggedIn]); // Watch for changes in isLoggedIn state
 
   const addBlog = async (event) => {
     event.preventDefault();
@@ -73,25 +65,28 @@ const App = () => {
   };
 
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     
     try {
-      const user = await loginService.login({ username, password });
+      const user = await loginService.login({
+        username, password,
+      })
   
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
-      blogService.setToken(user.token);
-      console.log('Logged in user:', user); // Debugging log
-      setUser(user);
-      setUsername('');
-      setPassword('');
-      setBlogsFetched(false); // Reset blogsFetched to false to trigger re-fetch of blogs
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      blogService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+      setIsLoggedIn(true); // Set isLoggedIn to true after successful login
     } catch (exception) {
       setNotification({ message: 'Wrong credentials', type: 'error' });
       setTimeout(() => {
         setNotification({ message: null, type: '' });
       }, 5000);
     }
-  };
+  }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -163,19 +158,6 @@ const App = () => {
     </form>
   );
 
-  const renderBlogs = () => (
-    <div>
-      <h2>Blog List</h2>
-      <ul>
-        {blogs.map(blog => (
-          <li key={blog._id}>
-            {blog.title} by {blog.author}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-
   return (
     <div>
       <h1>Blogs</h1>
@@ -190,8 +172,14 @@ const App = () => {
         </div>
       }
 
-      {blogsFetched && renderBlogs()} {/* Render blogs only if fetched */}
-
+      <h2>Blog List</h2>
+      <ul>
+        {blogs.map(blog => (
+          <li key={blog._id}>
+            {blog.title} by {blog.author}
+          </li>
+        ))}
+      </ul>
       <Footer />
     </div>
   );
