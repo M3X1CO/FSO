@@ -15,6 +15,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const [blogsFetched, setBlogsFetched] = useState(false);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -156,6 +157,19 @@ const App = () => {
     </form>
   );
 
+  const renderBlogs = () => {
+    <div>
+      <h2>Blog List</h2>
+      <ul>
+        {blogs.map(blog => (
+          <li key={blog._id}>
+            {blog.title} by {blog.author}
+          </li>
+        ))}
+      </ul>
+    </div>
+  }
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -170,14 +184,8 @@ const App = () => {
         </div>
       }
 
-      <h2>Blog List</h2>
-      <ul>
-        {blogs.map(blog => (
-          <li key={blog._id}>
-            {blog.title} by {blog.author}
-          </li>
-        ))}
-      </ul>
+      {blogsFetched && renderBlogs()} {/* Render Blogs only if fetched */}
+
       <Footer />
     </div>
   );
