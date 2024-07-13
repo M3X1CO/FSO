@@ -8,11 +8,12 @@ const setToken = newToken => {
 }
 
 const getAll = async () => {
-  const response = await axios.get('/api/blogs', {
+  const config = {
     headers: { Authorization: token },
-  });
+  }
+  const response = await axios.get(baseUrl, newObject, config)
   return response.data;
-};
+}
 
 const create = async newObject => {
   const config = {
