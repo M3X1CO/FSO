@@ -181,20 +181,20 @@ const App = () => {
 
   return (
     <div>
-      <h1>Blogs</h1>
+      <h1>{isLoggedIn ? 'Blogs' : 'Login'}</h1>
 
       <Notification message={notification.message} type={notification.type} />
 
       {user === null ?
         loginForm() :
         <div>
-          <p>{user.name} logged-in <button onClick={handleLogout}>Logout</button></p>
+          <p className="logged-in">{user.name} logged-in <button onClick={handleLogout}>Logout</button></p>
           {blogForm()}
         </div>
       }
 
       {isLoggedIn && renderBlogList()}
-      
+
       <Footer />
     </div>
   );
