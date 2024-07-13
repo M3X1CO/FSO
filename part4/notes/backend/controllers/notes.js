@@ -36,7 +36,7 @@ notesRouter.post('/', async (request, response) => {
   }
 
   const user = await User.findById(decodedToken.id)
-  
+
   const note = new Note({
     content: content,
     important: important === undefined ? false : important,
