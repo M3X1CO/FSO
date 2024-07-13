@@ -208,7 +208,7 @@ describe('When there is initially some notes saved', () => {
       const usersAtStart = await helper.usersInDb()
 
       const newUser = {
-        username: 'root', 
+        username: 'root',
         name: 'Superuser',
         password: 'salainen',
       }
@@ -220,13 +220,13 @@ describe('When there is initially some notes saved', () => {
         .expect(400)
         .expect('Content-Type', /application\/json/)
 
-      console.log(result.body) 
+      console.log(result.body)
 
-      assert(result.body.error.includes('username must be unique')) 
+      assert(result.body.error.includes('username must be unique'))
 
       const usersAtEnd = await helper.usersInDb()
 
-      assert.strictEqual(usersAtEnd.length, usersAtStart.length) 
+      assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
 
     test('creation fails with proper statuscode and message if username or password is too short', async () => {
@@ -246,7 +246,7 @@ describe('When there is initially some notes saved', () => {
       assert(result.body.error.includes('username and password must be at least 3 characters long'))
 
       const users = await User.find({})
-      assert.strictEqual(users.length, 1) 
+      assert.strictEqual(users.length, 1)
     })
   })
 })

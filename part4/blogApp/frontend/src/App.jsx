@@ -8,7 +8,8 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newVotes, setNewVotes] = useState('');
-  const [expandedBlogId, setExpandedBlogId] = useState(null);
+  const [username, setUsername] = useState('') 
+  const [password, setPassword] = useState('') 
 
   useEffect(() => {
     blogService
@@ -38,9 +39,17 @@ const App = () => {
       });
   };
 
+  const handleLogin = (event => {
+    event.preventDefault()
+    console.log('loggin in with', username, password)
+  })
+
   return (
     <div>
       <h1>Blogs</h1>
+
+      <Notification message={errorMessage} />
+
       <form onSubmit={addBlog}>
         <div>
           <label htmlFor="authorInput">Author:</label>
