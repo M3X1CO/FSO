@@ -17,18 +17,21 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then(initialBlogs => {
-      setBlogs(initialBlogs);
-    });
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    console.log('Retrieved loggedUserJSON:', loggedUserJSON); // Debugging log
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      console.log('Parsed user from localStorage:', user); // Debugging log
+      setUser(user);
+      blogService.setToken(user.token);
+      console.log('Token set in blogService:', user.token); // Debugging log
+    }
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
+    blogService.getAll().then(initialBlogs => {
+      setBlogs(initialBlogs);
+    });
   }, []);
 
   const addBlog = async (event) => {
