@@ -195,7 +195,7 @@ const App = () => {
 
       {isLoggedIn && renderBlogList()}
 
-      <Footer />
+      {isLoggedIn && <Footer />}
     </div>
   );
 };
