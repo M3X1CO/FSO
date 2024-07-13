@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import Notification from './components/Notification'
-import Footer from './components/Footer'
+import Notification from './components/Notification';
+import Footer from './components/Footer';
 import blogService from './services/blogs';
-import loginService from './services/login'
+import loginService from './services/login';
 import './App.css';
 
 const App = () => {
@@ -11,76 +11,83 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newUrl, setNewUrl] = useState('');
   const [newVotes, setNewVotes] = useState('');
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState({ message: null, type: '' });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(initialBlogs => {
-        setBlogs(initialBlogs);
-      });
+    blogService.getAll().then(initialBlogs => {
+      setBlogs(initialBlogs);
+    });
   }, []);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
     }
-  }, [])
+  }, []);
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault();
     const blogObject = {
       author: newAuthor,
       title: newTitle,
       url: newUrl,
-      votes: newVotes
+      votes: newVotes,
     };
 
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog));
-        setNewAuthor('');
-        setNewTitle('');
-        setNewUrl('');
-        setNewVotes('');
-      });
+    try {
+      const returnedBlog = await blogService.create(blogObject);
+      setBlogs(blogs.concat(returnedBlog));
+      setNewAuthor('');
+      setNewTitle('');
+      setNewUrl('');
+      setNewVotes('');
+      setNotification({ message: `Added new blog: ${returnedBlog.title} by ${returnedBlog.author}`, type: 'success' });
+      setTimeout(() => {
+        setNotification({ message: null, type: '' });
+      }, 5000);
+    } catch (exception) {
+      setNotification({ message: 'Error adding blog', type: 'error' });
+      setTimeout(() => {
+        setNotification({ message: null, type: '' });
+      }, 5000);
+    }
   };
 
   const handleLogin = async (event) => {
-    event.preventDefault()
-    
+    event.preventDefault();
     try {
       const user = await loginService.login({
         username, password,
-      })
+      });
 
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+      blogService.setToken(user.token);
+      setUser(user);
+      setUsername('');
+      setPassword('');
+      setNotification({ message: `Welcome ${user.name}`, type: 'success' });
       setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        setNotification({ message: null, type: '' });
+      }, 5000);
+    } catch (exception) {
+      setNotification({ message: 'Wrong credentials', type: 'error' });
+      setTimeout(() => {
+        setNotification({ message: null, type: '' });
+      }, 5000);
     }
-  }
+  };
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -89,7 +96,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -97,67 +104,67 @@ const App = () => {
         />
       </div>
       <button type="submit">login</button>
-    </form>      
-  )
+    </form>
+  );
 
   const blogForm = () => (
     <form onSubmit={addBlog}>
-    <div>
-      <label htmlFor="authorInput">Author:</label>
-      <input
-        id="authorInput"
-        name="author"
-        value={newAuthor}
-        onChange={({ target }) => setNewAuthor(target.value)}
-        autoComplete="off"
-      />
-    </div>
-    <div>
-      <label htmlFor="titleInput">Title:</label>
-      <input
-        id="titleInput"
-        name="title"
-        value={newTitle}
-        onChange={({ target }) => setNewTitle(target.value)}
-        autoComplete="off"
-      />
-    </div>
-    <div>
-      <label htmlFor="urlInput">URL:</label>
-      <input
-        id="urlInput"
-        name="url"
-        value={newUrl}
-        onChange={({ target }) => setNewUrl(target.value)}
-        autoComplete="off"
-      />
-    </div>
-    <div>
-      <label htmlFor="votesInput">Votes:</label>
-      <input
-        id="votesInput"
-        name="votes"
-        value={newVotes}
-        onChange={({ target }) => setNewVotes(target.value)}
-        autoComplete="off"
-      />
-    </div>
-    <button type="submit">Save</button>
-  </form> 
-  )
+      <div>
+        <label htmlFor="authorInput">Author:</label>
+        <input
+          id="authorInput"
+          name="author"
+          value={newAuthor}
+          onChange={({ target }) => setNewAuthor(target.value)}
+          autoComplete="off"
+        />
+      </div>
+      <div>
+        <label htmlFor="titleInput">Title:</label>
+        <input
+          id="titleInput"
+          name="title"
+          value={newTitle}
+          onChange={({ target }) => setNewTitle(target.value)}
+          autoComplete="off"
+        />
+      </div>
+      <div>
+        <label htmlFor="urlInput">URL:</label>
+        <input
+          id="urlInput"
+          name="url"
+          value={newUrl}
+          onChange={({ target }) => setNewUrl(target.value)}
+          autoComplete="off"
+        />
+      </div>
+      <div>
+        <label htmlFor="votesInput">Votes:</label>
+        <input
+          id="votesInput"
+          name="votes"
+          value={newVotes}
+          onChange={({ target }) => setNewVotes(target.value)}
+          autoComplete="off"
+        />
+      </div>
+      <button type="submit">Save</button>
+    </form>
+  );
 
   return (
     <div>
       <h1>Blogs</h1>
 
-      <Notification message={errorMessage} />
+      <Notification message={notification.message} type={notification.type} />
 
       {user === null ?
-      loginForm() :
-      <div>
-        <p>{user.name} logged-in</p>
-        {blogForm()}
-      </div>
+        loginForm() :
+        <div>
+          <p>{user.name} logged-in</p>
+          {blogForm()}
+        </div>
       }
 
       <h2>Blog List</h2>
