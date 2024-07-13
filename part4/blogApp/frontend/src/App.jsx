@@ -88,6 +88,14 @@ const App = () => {
     }
   }
 
+  const handleLogout = () => {
+    // Clear user data from localStorage and reset state
+    window.localStorage.removeItem('loggedBlogappUser');
+    blogService.setToken(null);
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -158,6 +166,19 @@ const App = () => {
     </form>
   );
 
+  const renderBlogList = () => (
+    <div>
+      <h2>Blog List</h2>
+      <ul>
+        {blogs.map(blog => (
+          <li key={blog._id}>
+            {blog.title} by {blog.author}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -167,19 +188,13 @@ const App = () => {
       {user === null ?
         loginForm() :
         <div>
-          <p>{user.name} logged-in</p>
+          <p>{user.name} logged-in <button onClick={handleLogout}>Logout</button></p>
           {blogForm()}
         </div>
       }
 
-      <h2>Blog List</h2>
-      <ul>
-        {blogs.map(blog => (
-          <li key={blog._id}>
-            {blog.title} by {blog.author}
-          </li>
-        ))}
-      </ul>
+      {isLoggedIn && renderBlogList()}
+      
       <Footer />
     </div>
   );
