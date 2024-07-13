@@ -15,7 +15,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [blogsFetched, setBlogsFetched] = useState(false);
+  const [blogsFetched, setBlogsFetched] = useState(false); // New state variable
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -30,9 +30,18 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    blogService.getAll().then(initialBlogs => {
-      setBlogs(initialBlogs);
-    });
+    const fetchBlogs = async () => {
+      try {
+        const initialBlogs = await blogService.getAll();
+        setBlogs(initialBlogs);
+        setBlogsFetched(true); // Update state to indicate blogs are fetched
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+        // Handle error or set state accordingly
+      }
+    };
+
+    fetchBlogs();
   }, []);
 
   const addBlog = async (event) => {
@@ -64,28 +73,25 @@ const App = () => {
   };
 
   const handleLogin = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     
     try {
-      const user = await loginService.login({
-        username, password,
-      })
+      const user = await loginService.login({ username, password });
   
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      console.log('Logged in user:', user) // Debugging log
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+      blogService.setToken(user.token);
+      console.log('Logged in user:', user); // Debugging log
+      setUser(user);
+      setUsername('');
+      setPassword('');
+      setBlogsFetched(false); // Reset blogsFetched to false to trigger re-fetch of blogs
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setNotification({ message: 'Wrong credentials', type: 'error' });
       setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        setNotification({ message: null, type: '' });
+      }, 5000);
     }
-  }
+  };
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -157,7 +163,7 @@ const App = () => {
     </form>
   );
 
-  const renderBlogs = () => {
+  const renderBlogs = () => (
     <div>
       <h2>Blog List</h2>
       <ul>
@@ -168,7 +174,7 @@ const App = () => {
         ))}
       </ul>
     </div>
-  }
+  );
 
   return (
     <div>
@@ -184,7 +190,7 @@ const App = () => {
         </div>
       }
 
-      {blogsFetched && renderBlogs()} {/* Render Blogs only if fetched */}
+      {blogsFetched && renderBlogs()} {/* Render blogs only if fetched */}
 
       <Footer />
     </div>
