@@ -66,7 +66,10 @@ const App = () => {
         username, password,
       });
 
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
+      window.localStorage
+      .setItem('loggedBlogappUser', 
+        JSON.stringify(user));
+        
       blogService.setToken(user.token);
       setUser(user);
       setUsername('');
