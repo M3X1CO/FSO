@@ -60,30 +60,28 @@ const App = () => {
   };
 
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
+    
     try {
       const user = await loginService.login({
         username, password,
-      });
-
-      window.localStorage
-      .setItem('loggedBlogappUser', 
-        JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername('');
-      setPassword('');
-      setNotification({ message: `Welcome ${user.name}`, type: 'success' });
-      setTimeout(() => {
-        setNotification({ message: null, type: '' });
-      }, 5000);
+      })
+  
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      blogService.setToken(user.token)
+      console.log('Logged in user:', user) // Debugging log
+      setUser(user)
+      setUsername('')
+      setPassword('')
     } catch (exception) {
-      setNotification({ message: 'Wrong credentials', type: 'error' });
+      setErrorMessage('Wrong credentials')
       setTimeout(() => {
-        setNotification({ message: null, type: '' });
-      }, 5000);
+        setErrorMessage(null)
+      }, 5000)
     }
-  };
+  }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
