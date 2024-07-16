@@ -23,6 +23,8 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
+      const baseUrl = '/api/blogs';
+      blogService.fetchBlogs(baseUrl, user.token);
       setIsLoggedIn(true); // User is logged in
     }
   }, []); // Only run once on mount
@@ -36,7 +38,6 @@ const App = () => {
     }
   }, [isLoggedIn]); // Watch for changes in isLoggedIn state
 
-  blogService.fetchBlogs();
 
   const addBlog = async (event) => {
     event.preventDefault();

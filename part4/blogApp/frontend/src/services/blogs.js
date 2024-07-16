@@ -32,8 +32,6 @@ const fetchBlogs = async (url, token) => {
   }
 };
 
-fetchBlogs(baseUrl, token);
-
 const getAll = async () => {
   try {
     const config = {
