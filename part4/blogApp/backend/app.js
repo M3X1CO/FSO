@@ -26,11 +26,11 @@ app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
 
-app.use((request, response, next) => {
-  console.log('Headers:', request.headers)
-  console.log('Authorization Header:', request.get('Authorization'))
-  next()
-})
+// app.use((request, response, next) => {
+//   console.log('Headers:', request.headers)
+//   console.log('Authorization Header:', request.get('Authorization'))
+//   next()
+// })
 
 app.use(middleware.requestLogger)
 

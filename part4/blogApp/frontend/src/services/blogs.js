@@ -8,6 +8,7 @@ const setToken = newToken => {
   console.log('Setting token:', token); // Debugging log
 };
 
+// test fetchBlogs in place 
 const fetchBlogs = async () => {
   try {
     const config = {
