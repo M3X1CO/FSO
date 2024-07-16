@@ -36,6 +36,8 @@ const App = () => {
     }
   }, [isLoggedIn]); // Watch for changes in isLoggedIn state
 
+  blogService.fetchBlogs(baseUrl, token);
+
   const addBlog = async (event) => {
     event.preventDefault();
     const blogObject = {

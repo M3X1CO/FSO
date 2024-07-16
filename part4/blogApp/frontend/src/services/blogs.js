@@ -92,4 +92,5 @@ export default {
   update,
   remove,
   setToken,
+  fetchBlogs,
 };
