@@ -8,17 +8,28 @@ const setToken = newToken => {
   console.log('Setting token:', token); // Debugging log
 };
 
-fetch('/api/blogs', {
-  method: 'GET',
-  headers: {
-    'Authorization': token,
-    'Content-Type': 'application/json'
-  }
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Error:', error));
+const fetchBlogs = async (url, token) => {
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json'
+      }
+    });
 
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+};
 
 const getAll = async () => {
   try {
