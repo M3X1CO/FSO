@@ -135,12 +135,7 @@ const App = () => {
       </div>
      }
       <ul>
-        {blogsToShow.map(blog => 
-          <Blog
-            key={blog.id}
-            blog={blog}
-          />
-        )}
+        blogsToShow()
       </ul>
       <Footer />
     </div>
