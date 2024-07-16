@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
-import Note from './components/NoteForm.jsx'
+import Note from './components/Note'
 import Notification from './components/Notification'
 import Footer from './components/Footer'
 import noteService from './services/notes'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
-import Togglable from './components/Togglable.jsx'
+import Togglable from './components/Togglable'
 import NoteForm from './components/NoteForm'
 
 const App = () => {
@@ -148,7 +148,7 @@ const App = () => {
         />
       </Togglable>
       </div>
-     }
+     } 
 
       <div>
         <button onClick={() => setShowAll(!showAll)}>

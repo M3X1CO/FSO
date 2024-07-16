@@ -1,2 +1,0 @@
-# FSO-Backend
-Test environment

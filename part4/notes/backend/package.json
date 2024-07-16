@@ -23,10 +23,10 @@
     "mongoose": "^8.1.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.0",
     "@stylistic/eslint-plugin-js": "^1.6.1",
-    "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.3",
-    "supertest": "^7.0.0"
+    "supertest": "^6.3.4"
   }
 }
