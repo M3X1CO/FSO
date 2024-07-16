@@ -29,26 +29,21 @@ const App = () => {
   };
 
   // Function to handle token expiration
-  const checkTokenExpiration = async () => {
+  const checkTokenExpiration = () => {
     const token = window.localStorage.getItem('loggedBlogappUser')?.token;
   
-    if (!token || isTokenExpired(token)) {
-      // Token is expired or user not logged in, attempt to log in again
-      try {
-        const user = await loginService.login({
-          username, password,
-        }); // Replace with appropriate login service function
+    if (!token) {
+      console.log('User not currently logged in');
+      return;
+    }
   
-        // Update localStorage and state with new user data
-        window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loggedUserJSON));
-        blogService.setToken(loggedUserJSON.token);
-        setUser(loggedUserJSON);
-        setIsLoggedIn(true);
-      } catch (exception) {
-        console.log('Automatic login failed:', exception);
-        // Handle failed login attempt gracefully, e.g., redirect to login page
-        // or display an error message to the user
-      }
+    if (isTokenExpired(token)) {
+      // Token is expired, log the user out
+      window.localStorage.removeItem('loggedBlogappUser');
+      blogService.setToken(null);
+      setUser(null);
+      setIsLoggedIn(false);
+      console.log('Token expired, user logged out');
     } else {
       const decodedToken = jwt_decode(token);
       const expirationTime = new Date(decodedToken.exp * 1000); // Convert seconds to milliseconds
@@ -57,12 +52,25 @@ const App = () => {
     }
   };
   
-  
-
   useEffect(() => {
-    // Check token expiration on component mount or when isLoggedIn changes
-    checkTokenExpiration();
+    const checkTokenInterval = 10 * 60 * 1000; // 1 hour in milliseconds
+  
+    const checkTokenPeriodically = () => {
+      if (isLoggedIn) {
+        checkTokenExpiration(); // Run token expiration check
+        setTimeout(checkTokenPeriodically, checkTokenInterval); // Schedule next check after 1 hour
+      }
+    };
+  
+    // Start checking token expiration when logged in
+    if (isLoggedIn) {
+      checkTokenPeriodically();
+    }
+  
+    // Clean up timer when component unmounts or user logs out
+    return () => clearTimeout(checkTokenPeriodically);
   }, [isLoggedIn]);
+  
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
