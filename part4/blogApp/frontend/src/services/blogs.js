@@ -8,6 +8,18 @@ const setToken = newToken => {
   console.log('Setting token:', token); // Debugging log
 };
 
+fetch('/api/blogs', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+
+
 const getAll = async () => {
   try {
     const config = {
