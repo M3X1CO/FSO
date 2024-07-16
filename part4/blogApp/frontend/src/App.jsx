@@ -17,61 +17,6 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
-  // Function to check if token is expired
-  const isTokenExpired = (token) => {
-    if (!token) return true; // Token is considered expired if not present
-
-    const decodedToken = jwt_decode(token);
-    const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
-    console.log('This happens next')
-
-    return decodedToken.exp < currentTime;
-  };
-
-  // Function to handle token expiration
-  const checkTokenExpiration = () => {
-    const token = window.localStorage.getItem('loggedBlogappUser')?.token;
-  
-    if (!token) {
-      console.log('User not currently logged in');
-      return;
-    }
-  
-    if (isTokenExpired(token)) {
-      // Token is expired, log the user out
-      window.localStorage.removeItem('loggedBlogappUser');
-      blogService.setToken(null);
-      setUser(null);
-      setIsLoggedIn(false);
-      console.log('Token expired, user logged out');
-    } else {
-      const decodedToken = jwt_decode(token);
-      const expirationTime = new Date(decodedToken.exp * 1000); // Convert seconds to milliseconds
-  
-      console.log(`Token expires at: ${expirationTime.toLocaleString()}`);
-    }
-  };
-  
-  useEffect(() => {
-    const checkTokenInterval = 10 * 60 * 1000; // 1 hour in milliseconds
-  
-    const checkTokenPeriodically = () => {
-      if (isLoggedIn) {
-        checkTokenExpiration(); // Run token expiration check
-        setTimeout(checkTokenPeriodically, checkTokenInterval); // Schedule next check after 1 hour
-      }
-    };
-  
-    // Start checking token expiration when logged in
-    if (isLoggedIn) {
-      checkTokenPeriodically();
-    }
-  
-    // Clean up timer when component unmounts or user logs out
-    return () => clearTimeout(checkTokenPeriodically);
-  }, [isLoggedIn]);
-  
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
     if (loggedUserJSON) {
