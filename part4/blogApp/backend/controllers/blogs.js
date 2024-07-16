@@ -1,6 +1,13 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
+let token = null;
+
+const setToken = newToken => {
+  token = `Bearer ${newToken}`;
+  console.log('Setting token:', token); // Debugging log
+};
+
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 })
@@ -8,13 +15,28 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
+  const config = {
+    headers: { Authorization: token },
+  };
+  const blog = await Blog.findById(request.params.id, config)
   if (blog) {
     response.json(blog)
   } else {
     response.status(404).end()
   }
 })
+
+// try {
+//   const config = {
+//     headers: { Authorization: token },
+//   };
+//   const response = await axios.get(baseUrl, config);
+//   return response.data;
+// } catch (error) {
+//   console.error('Error fetching all blogs:', error.response || error.message); // Debugging log
+//   throw error;
+// }
+
 
 blogsRouter.post('/', async (request, response) => {
   const { author, title, url, votes } = request.body
