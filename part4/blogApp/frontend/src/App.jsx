@@ -29,16 +29,26 @@ const App = () => {
   };
 
   // Function to handle token expiration
-  const checkTokenExpiration = () => {
+  const checkTokenExpiration = async () => {
     const token = window.localStorage.getItem('loggedBlogappUser')?.token;
-    console.log('This happened')
   
-    if (isTokenExpired(token)) {
-      // Token expired, log user out
-      window.localStorage.removeItem('loggedBlogappUser');
-      blogService.setToken(null);
-      setUser(null);
-      setIsLoggedIn(false);
+    if (!token || isTokenExpired(token)) {
+      // Token is expired or user not logged in, attempt to log in again
+      try {
+        const user = await loginService.login({
+          username, password,
+        }); // Replace with appropriate login service function
+  
+        // Update localStorage and state with new user data
+        window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loggedUserJSON));
+        blogService.setToken(loggedUserJSON.token);
+        setUser(loggedUserJSON);
+        setIsLoggedIn(true);
+      } catch (exception) {
+        console.log('Automatic login failed:', exception);
+        // Handle failed login attempt gracefully, e.g., redirect to login page
+        // or display an error message to the user
+      }
     } else {
       const decodedToken = jwt_decode(token);
       const expirationTime = new Date(decodedToken.exp * 1000); // Convert seconds to milliseconds
@@ -46,6 +56,7 @@ const App = () => {
       console.log(`Token expires at: ${expirationTime.toLocaleString()}`);
     }
   };
+  
   
 
   useEffect(() => {
