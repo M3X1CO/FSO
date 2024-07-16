@@ -17,6 +17,40 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
+  // Function to check if token is expired
+  const isTokenExpired = (token) => {
+    if (!token) return true; // Token is considered expired if not present
+
+    const decodedToken = jwt_decode(token);
+    const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+
+    return decodedToken.exp < currentTime;
+  };
+
+  // Function to handle token expiration
+  const checkTokenExpiration = () => {
+    const token = window.localStorage.getItem('loggedBlogappUser')?.token;
+  
+    if (isTokenExpired(token)) {
+      // Token expired, log user out
+      window.localStorage.removeItem('loggedBlogappUser');
+      blogService.setToken(null);
+      setUser(null);
+      setIsLoggedIn(false);
+    } else {
+      const decodedToken = jwt_decode(token);
+      const expirationTime = new Date(decodedToken.exp * 1000); // Convert seconds to milliseconds
+  
+      console.log(`Token expires at: ${expirationTime.toLocaleString()}`);
+    }
+  };
+  
+
+  useEffect(() => {
+    // Check token expiration on component mount or when isLoggedIn changes
+    checkTokenExpiration();
+  }, [isLoggedIn]);
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
     if (loggedUserJSON) {
