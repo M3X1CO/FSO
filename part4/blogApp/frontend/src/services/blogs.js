@@ -22,6 +22,7 @@ const fetchBlogs = async (url, token) => {
       throw new Error('Network response was not ok');
     }
 
+    console.log('Are we getting to this point?')
     const data = await response.json();
     console.log(data);
     return data;
