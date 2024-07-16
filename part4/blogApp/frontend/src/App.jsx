@@ -110,7 +110,7 @@ const App = () => {
   const blogForm = () => (
     <form onSubmit={addBlog}>
       <input
-        value={newBlog}
+        value={setBlogs}
         onChange={handleBlogChange}
       />
       <button type="submit">save</button>
@@ -128,7 +128,7 @@ const App = () => {
        <Togglable buttonLabel="New Blog">
         <BlogForm
           onSubmit={addBlog}
-          value={newBlog}
+          value={setBlogs}
           handleChange={handleBlogChange}
         />
       </Togglable>
