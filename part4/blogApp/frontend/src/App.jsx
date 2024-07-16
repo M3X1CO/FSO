@@ -1,71 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import Notification from './components/Notification';
-import Footer from './components/Footer';
-import blogService from './services/blogs';
-import loginService from './services/login';
-import './App.css';
+import { useState, useEffect } from 'react'
+import Notification from './components/Notification'
+import Footer from './components/Footer'
+import blogService from './services/blogs'
+import loginService from './services/login'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [newAuthor, setNewAuthor] = useState('');
-  const [newTitle, setNewTitle] = useState('');
-  const [newUrl, setNewUrl] = useState('');
-  const [newVotes, setNewVotes] = useState('');
-  const [notification, setNotification] = useState({ message: null, type: '' });
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+  const [blogs, setBlogs] = useState([])
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newTitle, setNewTitle] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+  const [newVotes, setNewVotes] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-      blogService.fetchBlogs();
-      setIsLoggedIn(true); // User is logged in
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
     }
-  }, []); // Only run once on mount
+  }, [])
 
   useEffect(() => {
-    if (isLoggedIn) {
-      // Fetch blogs when user logs in or when isLoggedIn changes
-      blogService.getAll().then(initialBlogs => {
-        setBlogs(initialBlogs);
-      });
-    }
-  }, [isLoggedIn]); // Watch for changes in isLoggedIn state
+    blogService
+      .getAll()
+      .then(initialBlogs => {
+        setBlogs(initialBlogs)
+      })
+  }, [])
 
-
-  const addBlog = async (event) => {
-    event.preventDefault();
+  const addBlog = (event) => {
+    event.preventDefault()
     const blogObject = {
       author: newAuthor,
       title: newTitle,
       url: newUrl,
       votes: newVotes,
-    };
-
-    try {
-      const returnedBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(returnedBlog));
-      setNewAuthor('');
-      setNewTitle('');
-      setNewUrl('');
-      setNewVotes('');
-      setNotification({ message: `Added new blog: ${returnedBlog.title} by ${returnedBlog.author}`, type: 'success' });
-      setTimeout(() => {
-        setNotification({ message: null, type: '' });
-      }, 5000);
-    } catch (exception) {
-      setNotification({ message: 'Error adding blog', type: 'error' });
-      setTimeout(() => {
-        setNotification({ message: null, type: '' });
-      }, 5000);
     }
-  };
 
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setNewAuthor('')
+        setNewTitle('')
+        setNewUrl('')
+        setNewVotes('')
+      })
+  }
+  
+  const handleBlogChange = (event) => {
+    setNewBlog(event.target.value)
+  }
+  
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -73,133 +66,84 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
-  
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      )
+      ) 
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-      setIsLoggedIn(true); // Set isLoggedIn to true after successful login
     } catch (exception) {
-      setNotification({ message: 'Wrong credentials', type: 'error' });
+      setErrorMessage('wrong credentials')
       setTimeout(() => {
-        setNotification({ message: null, type: '' });
-      }, 5000);
+        setErrorMessage(null)
+      }, 5000)
     }
   }
+  
+  const blogsToShow = blogs;
 
-  const handleLogout = () => {
-    // Clear user data from localStorage and reset state
-    window.localStorage.removeItem('loggedBlogappUser');
-    blogService.setToken(null);
-    setUser(null);
-    setIsLoggedIn(false);
-  };
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
+    return (
       <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
       </div>
-      <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  );
+    )
+  }
 
   const blogForm = () => (
     <form onSubmit={addBlog}>
-      <div>
-        <label htmlFor="authorInput">Author:</label>
-        <input
-          id="authorInput"
-          name="author"
-          value={newAuthor}
-          onChange={({ target }) => setNewAuthor(target.value)}
-          autoComplete="off"
-        />
-      </div>
-      <div>
-        <label htmlFor="titleInput">Title:</label>
-        <input
-          id="titleInput"
-          name="title"
-          value={newTitle}
-          onChange={({ target }) => setNewTitle(target.value)}
-          autoComplete="off"
-        />
-      </div>
-      <div>
-        <label htmlFor="urlInput">URL:</label>
-        <input
-          id="urlInput"
-          name="url"
-          value={newUrl}
-          onChange={({ target }) => setNewUrl(target.value)}
-          autoComplete="off"
-        />
-      </div>
-      <div>
-        <label htmlFor="votesInput">Votes:</label>
-        <input
-          id="votesInput"
-          name="votes"
-          value={newVotes}
-          onChange={({ target }) => setNewVotes(target.value)}
-          autoComplete="off"
-        />
-      </div>
-      <button type="submit">Save</button>
-    </form>
-  );
-
-  const renderBlogList = () => (
-    <div>
-      <h2>Blog List</h2>
-      <ul>
-        {blogs.map(blog => (
-          <li key={blog._id}>
-            {blog.title} by {blog.author}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+      <input
+        value={newBlog}
+        onChange={handleBlogChange}
+      />
+      <button type="submit">save</button>
+    </form>  
+  )
 
   return (
     <div>
-      <h1>{isLoggedIn ? 'Blogs' : 'Login'}</h1>
+      <h1>Blogs</h1>
+      <Notification message={errorMessage} />
 
-      <Notification message={notification.message} type={notification.type} />
-
-      {user === null ?
-        loginForm() :
-        <div>
-          <p className="logged-in">{user.name} logged-in <button onClick={handleLogout}>Logout</button></p>
-          {blogForm()}
-        </div>
-      }
-
-      {isLoggedIn && renderBlogList()}
-
-      {isLoggedIn && <Footer />}
+      {!user && loginForm()}
+      {user && <div>
+       <p>{user.name} logged in</p>
+       <Togglable buttonLabel="New Blog">
+        <BlogForm
+          onSubmit={addBlog}
+          value={newBlog}
+          handleChange={handleBlogChange}
+        />
+      </Togglable>
+      </div>
+     }
+      <ul>
+        {blogsToShow.map(blog => 
+          <Blog
+            key={blog.id}
+            blog={blog}
+          />
+        )}
+      </ul>
+      <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
