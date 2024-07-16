@@ -8,26 +8,16 @@ const setToken = newToken => {
   console.log('Setting token:', token); // Debugging log
 };
 
-const fetchBlogs = async (url, token) => {
+const fetchBlogs = async () => {
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': token,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    console.log('Are we getting to this point?')
-    const data = await response.json();
-    console.log(data);
-    return data;
+    const config = {
+      headers: { Authorization: token },
+    };
+    const response = await axios.get(baseUrl, config);
+    console.log(response.data)
+    return response.data;
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('This is a new error era nigga:', error.response || error.message); // Debugging log
     throw error;
   }
 };

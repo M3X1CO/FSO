@@ -23,8 +23,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
-      const baseUrl = '/api/blogs';
-      blogService.fetchBlogs(baseUrl, user.token);
+      blogService.fetchBlogs();
       setIsLoggedIn(true); // User is logged in
     }
   }, []); // Only run once on mount
