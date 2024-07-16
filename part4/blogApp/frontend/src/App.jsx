@@ -30,6 +30,7 @@ const App = () => {
   // Function to handle token expiration
   const checkTokenExpiration = () => {
     const token = window.localStorage.getItem('loggedBlogappUser')?.token;
+    console.log('This happened')
   
     if (isTokenExpired(token)) {
       // Token expired, log user out
