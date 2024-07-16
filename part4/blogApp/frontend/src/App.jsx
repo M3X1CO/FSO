@@ -23,6 +23,7 @@ const App = () => {
 
     const decodedToken = jwt_decode(token);
     const currentTime = Date.now() / 1000; // Convert milliseconds to seconds
+    console.log('This happens next')
 
     return decodedToken.exp < currentTime;
   };
