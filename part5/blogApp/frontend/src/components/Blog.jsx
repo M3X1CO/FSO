@@ -1,11 +1,17 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, handleDelete }) => {
   const [showDetails, setShowDetails] = useState(false)
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
   }
+
+  const confirmDelete = () => {
+    if (window.confirm(`Are you sure you want to delete ${blog.title}?`)) {
+      handleDelete(blog.id);
+    }
+  };
 
   return (
     <li>
@@ -21,6 +27,9 @@ const Blog = ({ blog, handleLike }) => {
           <p>{blog.votes} Votes</p>
           <button onClick={() => handleLike(blog.id)}>Like</button>
           {blog.user && <p>Added by {blog.user.name}</p>}
+          <button onClick={confirmDelete} style={{ marginLeft: '1rem', color: 'red' }}>
+          Delete
+          </button>
         </div>
       )}
     </li>

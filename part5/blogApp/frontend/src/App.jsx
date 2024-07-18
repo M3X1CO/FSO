@@ -79,6 +79,16 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async id => {
+    try {
+      await blogService.remove(id)
+      const updatedBlogs = blogs.filter(blog => blog.id !== id)
+      setBlogs(updatedBlogs)
+    } catch (error) {
+      console.error('Error deleting blog:', error)
+    }
+  };
+
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
     const showWhenVisible = { display: loginVisible ? '' : 'none' }
@@ -118,7 +128,7 @@ const App = () => {
       {user && (
         <ul>
           {blogs.map(blog => (
-            <Blog key={blog.id} blog={blog} handleLike={likeBlog} />
+            <Blog key={blog.id} blog={blog} handleLike={likeBlog} handleDelete={deleteBlog} />
           ))}
         </ul>
       )}
