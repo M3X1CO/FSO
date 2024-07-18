@@ -74,6 +74,11 @@ const App = () => {
   
       // Update the state with the sorted array
       setBlogs(updatedBlogs)
+
+      // Ensure the updated blog includes user information
+      const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
+      setBlogs(blogs.map(b => (b.id === id ? updatedBlogWithUser : b)))
+      
     } catch (error) {
       console.error('Error liking blog:', error)
     }
