@@ -58,7 +58,7 @@ const BlogForm = ({ createBlog }) => {
             value={newBlog.url}
             onChange={handleChange}
             placeholder="Enter blog URL"
-            type="url"
+            type="text"
           />
         </div>
         <div>
