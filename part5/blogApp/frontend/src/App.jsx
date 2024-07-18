@@ -103,7 +103,7 @@ const App = () => {
       )}
       <ul>
         {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} handleLike={likeBlog} />
+          <Blog key={blog.id} blog={blog} handleLike={likeBlog} userName={blog.user.name} />
         ))}
       </ul>
       <Footer />
