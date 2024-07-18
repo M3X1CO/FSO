@@ -55,6 +55,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then(returnedBlog => {
       setBlogs(blogs.concat(returnedBlog))
+      setUser({ ...user, blogs: user.blogs.concat(returnedBlog) })
     })
   }
 
@@ -63,6 +64,7 @@ const App = () => {
     const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
     const updatedBlog = await blogService.update(id, likedBlog)
     setBlogs(blogs.map(b => (b.id !== id ? b : updatedBlog)))
+    setUser({ ...user, blogs: user.blogs.map(b => (b.id !== id ? b : updatedBlog)) })
   }
 
   const loginForm = () => {
@@ -103,7 +105,7 @@ const App = () => {
       )}
       <ul>
         {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} handleLike={likeBlog} userName={blog.user.name} />
+          <Blog key={blog.id} blog={blog} handleLike={likeBlog} userName={user.name} />
         ))}
       </ul>
       <Footer />
