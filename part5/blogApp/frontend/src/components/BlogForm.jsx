@@ -25,14 +25,11 @@ const BlogForm = ({ createBlog }) => {
       url: '',
       votes: 0
     })
-
-    setNewBlog('')
   }
 
   return (
     <div>
       <h2>Create a new blog</h2>
-
       <form onSubmit={addBlog}>
         <div>
           <label>Author:</label>
@@ -40,6 +37,8 @@ const BlogForm = ({ createBlog }) => {
             name="author"
             value={newBlog.author}
             onChange={handleChange}
+            placeholder="Enter author name"
+            type="text"
           />
         </div>
         <div>
@@ -48,6 +47,8 @@ const BlogForm = ({ createBlog }) => {
             name="title"
             value={newBlog.title}
             onChange={handleChange}
+            placeholder="Enter blog title"
+            type="text"
           />
         </div>
         <div>
@@ -56,6 +57,8 @@ const BlogForm = ({ createBlog }) => {
             name="url"
             value={newBlog.url}
             onChange={handleChange}
+            placeholder="Enter blog URL"
+            type="url"
           />
         </div>
         <div>
@@ -65,6 +68,7 @@ const BlogForm = ({ createBlog }) => {
             type="number"
             value={newBlog.votes}
             onChange={handleChange}
+            placeholder="Enter initial votes"
           />
         </div>
         <button type="submit">save</button>
