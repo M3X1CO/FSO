@@ -27,17 +27,7 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
           <p>{blog.votes} Votes</p>
           <button onClick={() => handleLike(blog.id)}>Like</button>
           {blog.user && <p>Added by {blog.user.name}</p>}
-          <button onClick={confirmDelete} style={{ 
-            marginLeft: '1rem', 
-            backgroundColor: 'red', 
-            color: 'white', 
-            padding: '10px 15px', 
-            border: 'none', 
-            borderRadius: '5px', 
-            cursor: 'pointer' 
-          }}>
-            Delete
-          </button>
+          <button onClick={confirmDelete} className="delete-button">Delete</button>
         </div>
       )}
     </li>
