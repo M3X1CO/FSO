@@ -27,5 +27,10 @@ h1 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 20px
+  font-size: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ff9999;
 }
