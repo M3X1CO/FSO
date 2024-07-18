@@ -63,6 +63,8 @@ const App = () => {
     const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
     const updatedBlog = await blogService.update(id, likedBlog)
     setBlogs(blogs.map(b => (b.id !== id ? b : updatedBlog)))
+    const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
+    setBlogs(blogs.map(b => (b.id !== id ? b : updatedBlogWithUser)))
   }
 
   const loginForm = () => {
