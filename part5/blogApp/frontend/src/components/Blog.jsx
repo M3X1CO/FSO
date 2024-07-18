@@ -9,9 +9,9 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
 
   const confirmDelete = () => {
     if (window.confirm(`Are you sure you want to delete ${blog.title}?`)) {
-      handleDelete(blog.id);
+      handleDelete(blog.id)
     }
-  };
+  }
 
   return (
     <li>

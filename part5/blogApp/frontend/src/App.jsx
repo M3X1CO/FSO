@@ -64,16 +64,16 @@ const App = () => {
       // Find the blog to like and prepare the updated blog object
       const blogToLike = blogs.find(b => b.id === id)
       const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
-  
+
       // Update the blog on the server
       const updatedBlog = await blogService.update(id, likedBlog)
-  
+
       // Ensure the updated blog includes user information
       const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
-  
+
       // Update the state with the sorted array
       setBlogs(blogs.map(b => (b.id === id ? updatedBlogWithUser : b)).sort((a, b) => b.votes - a.votes))
-  
+
     } catch (error) {
       console.error('Error liking blog:', error)
     }
