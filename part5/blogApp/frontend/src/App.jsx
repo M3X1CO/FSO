@@ -87,7 +87,7 @@ const App = () => {
     } catch (error) {
       console.error('Error deleting blog:', error)
     }
-  };
+  }
 
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
