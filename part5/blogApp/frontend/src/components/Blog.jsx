@@ -9,10 +9,12 @@ const Blog = ({ blog, handleLike, userName }) => {
 
   return (
     <li>
-      {blog.title} {blog.author}
-      <button onClick={toggleDetails}>
-        {showDetails ? 'Hide' : 'View'}
-      </button>
+      <div>
+        <strong>{blog.title}</strong> by {blog.author}
+        <button onClick={toggleDetails}>
+          {showDetails ? 'Hide' : 'View'}
+        </button>
+      </div>
       {showDetails && (
         <div>
           <p>{blog.url}</p>
