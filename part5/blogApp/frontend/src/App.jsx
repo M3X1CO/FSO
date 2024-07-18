@@ -58,6 +58,13 @@ const App = () => {
     })
   }
 
+  const likeBlog = async (id) => {
+    const blogToLike = blogs.find(b => b.id === id)
+    const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
+    const updatedBlog = await blogService.update(id, likedBlog)
+    setBlogs(blogs.map(b => (b.id !== id ? b : updatedBlog)))
+  }
+
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
     const showWhenVisible = { display: loginVisible ? '' : 'none' }
@@ -96,7 +103,7 @@ const App = () => {
       )}
       <ul>
         {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} handleLike={likeBlog} />
         ))}
       </ul>
       <Footer />

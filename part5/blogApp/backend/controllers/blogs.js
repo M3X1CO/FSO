@@ -18,13 +18,13 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response, next) => {
-  const body = request.body
+  const { author, title, url, votes } = request.body
 
   const blog = {
-    author: body.author,
-    title: body.title,
-    url: body.url,
-    votes: body.votes
+    author,
+    title,
+    url,
+    votes
   }
 
   Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
@@ -37,7 +37,7 @@ blogsRouter.put('/:id', async (request, response, next) => {
 blogsRouter.post('/', async (request, response) => {
   const { author, title, url, votes } = request.body
   const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
 
   if (!decodedToken.id) {
 
@@ -63,13 +63,13 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id);
+  const blog = await Blog.findById(request.params.id)
   if (blog) {
-    response.json(blog);
+    response.json(blog)
   } else {
     response.status(404).end()
   }
-});
+})
 
 blogsRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)
