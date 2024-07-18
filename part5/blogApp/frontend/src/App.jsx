@@ -68,22 +68,16 @@ const App = () => {
       // Update the blog on the server
       const updatedBlog = await blogService.update(id, likedBlog)
   
-      // Create a new array with updated blog and sort it by votes descending
-      const updatedBlogs = blogs.map(b => (b.id === id ? updatedBlog : b))
-      updatedBlogs.sort((a, b) => b.votes - a.votes)
-  
-      // Update the state with the sorted array
-      setBlogs(updatedBlogs)
-
       // Ensure the updated blog includes user information
       const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
-      setBlogs(blogs.map(b => (b.id === id ? updatedBlogWithUser : b)))
-      
+  
+      // Update the state with the sorted array
+      setBlogs(blogs.map(b => (b.id === id ? updatedBlogWithUser : b)).sort((a, b) => b.votes - a.votes))
+  
     } catch (error) {
       console.error('Error liking blog:', error)
     }
   }
-    
 
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
