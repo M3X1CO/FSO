@@ -60,17 +60,25 @@ const App = () => {
   }
 
   const likeBlog = async (id) => {
-    const blogToLike = blogs.find(b => b.id === id)
-    const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
-    const updatedBlog = await blogService.update(id, likedBlog)
-
-    const updatedBlogs = blogs.map(b => (b.id !== id ? b : updatedBlog))
-    updatedBlogs.sort((a, b) => b.votes - a.votes)
-    setBlogs(updatedBlogs)
-
-    const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
-    setBlogs(blogs.map(b => (b.id !== id ? b : updatedBlogWithUser)))
+    try {
+      // Find the blog to like and prepare the updated blog object
+      const blogToLike = blogs.find(b => b.id === id)
+      const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
+  
+      // Update the blog on the server
+      const updatedBlog = await blogService.update(id, likedBlog)
+  
+      // Create a new array with updated blog and sort it by votes descending
+      const updatedBlogs = blogs.map(b => (b.id === id ? updatedBlog : b))
+      updatedBlogs.sort((a, b) => b.votes - a.votes)
+  
+      // Update the state with the sorted array
+      setBlogs(updatedBlogs)
+    } catch (error) {
+      console.error('Error liking blog:', error)
+    }
   }
+    
 
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
