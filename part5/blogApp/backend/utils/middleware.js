@@ -13,23 +13,29 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error('error:', error)
-
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
+    logger.error('Error: Malformatted id:', error.message)
+    return response.status(400).send({ error: 'Malformatted id' })
   } else if (error.name === 'ValidationError') {
-      const errors = {}
-      Object.keys(error.errors).forEach((key) => {
-        errors[key] = error.errors[key].message
-      })
-      return response.status(400).json({ error: errors})
+    logger.error('Validation Error:', error.message)
+    const errors = {}
+    Object.keys(error.errors).forEach((key) => {
+      errors[key] = error.errors[key].message
+    })
+    return response.status(400).json({ error: errors })
   } else if (error.name === 'MongoServerError' && error.message.includes('E11000 duplicate key error')) {
-      return response.status(400).json({error: 'expected `username` to be unique'})
+    logger.error('MongoDB Duplicate Key Error:', error.message)
+    return response.status(400).json({ error: 'Expected `username` to be unique' })
   } else if (error.name === 'JsonWebTokenError') {
-      return response.status(401).json({error: 'invalid token'})
+    logger.error('JWT Error:', error.message)
+    return response.status(401).json({ error: 'Invalid token' })
   } else if (error.name === 'TokenExpiredError') {
-      return response.status(401).json({error: 'token expired'})
+    logger.error('JWT Token Expired:', error.message)
+    return response.status(401).json({ error: 'Token expired' })
   }
+
+  // Log other unexpected errors
+  logger.error('Internal Server Error:', error.message)
   next(error)
 }
 
