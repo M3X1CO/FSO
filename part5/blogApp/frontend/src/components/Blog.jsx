@@ -10,7 +10,7 @@ const Blog = ({ blog, handleLike, userName }) => {
   return (
     <li>
       <div>
-        <strong>{blog.title}</strong> by {blog.author}
+        <strong>{blog.title}</strong> {blog.author}
         <button onClick={toggleDetails}>
           {showDetails ? 'Hide' : 'View'}
         </button>
@@ -20,7 +20,7 @@ const Blog = ({ blog, handleLike, userName }) => {
           <p>{blog.url}</p>
           <p>{blog.votes} Votes</p>
           <button onClick={() => handleLike(blog.id)}>Like</button>
-          <p>Added by: {userName}</p>
+          {userName && <p>Added by {userName}</p>}
         </div>
       )}
     </li>

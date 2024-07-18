@@ -103,11 +103,13 @@ const App = () => {
           </Togglable>
         </div>
       )}
-      <ul>
-        {blogs.map(blog => (
-          <Blog key={blog.id} blog={blog} handleLike={likeBlog} userName={user.name} />
-        ))}
-      </ul>
+      {user && (
+        <ul>
+          {blogs.map(blog => (
+            <Blog key={blog.id} blog={blog} handleLike={likeBlog} userName={user ? user.name : null} />
+          ))}
+        </ul>
+      )}
       <Footer />
     </div>
   )
