@@ -34,7 +34,6 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({ error: 'Token expired' })
   }
 
-  // Log other unexpected errors
   logger.error('Internal Server Error:', error.message)
   next(error)
 }
