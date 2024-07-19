@@ -102,7 +102,7 @@ test('calls handleDelete when delete button is clicked after confirmation', asyn
     id: '1'
   }
   const handleDelete = vi.fn()
-  
+
   render(<Blog blog={blog} handleDelete={handleDelete} />)
 
   const user = userEvent.setup()
