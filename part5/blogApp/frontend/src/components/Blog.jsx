@@ -14,9 +14,9 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
   }
 
   return (
-    <li>
+    <li className='blog'>
       <div>
-        <strong>{blog.title}</strong> {blog.author}
+        <strong>Title: {blog.title}</strong> Author: {blog.author}
         <button onClick={toggleDetails}>
           {showDetails ? 'Hide' : 'View'}
         </button>

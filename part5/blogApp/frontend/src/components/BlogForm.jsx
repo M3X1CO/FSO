@@ -13,7 +13,7 @@ const BlogForm = ({ createBlog }) => {
     const { name, value } = event.target
     setNewBlog({
       ...newBlog,
-      [name]: value
+      [name]: name === 'votes' ? Number(value) : value
     })
   }
 
@@ -66,10 +66,10 @@ const BlogForm = ({ createBlog }) => {
           <label>Votes:</label>
           <input
             name="votes"
-            type="number"
             value={newBlog.votes}
             onChange={handleChange}
             placeholder="Enter initial votes"
+            type="number"
           />
         </div>
         <button type="submit">save</button>
