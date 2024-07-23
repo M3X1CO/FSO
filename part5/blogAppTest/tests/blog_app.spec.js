@@ -44,8 +44,9 @@ describe('Blog app', () => {
         // Check that the delete button is not visible for 'other' user
         await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(0)
 
-        // Log out by navigating back to home page
-        await page.goto('/')
+        // Ensure the logout button is visible and click it
+        await expect(logoutButton).toBeVisible()
+        await logoutButton.click()
 
         // Log back in as 'test' user
         await loginWith(page, 'test', 'test')
@@ -53,8 +54,12 @@ describe('Blog app', () => {
         // Ensure the blog details are visible
         await blogElement.locator('[data-testid="toggle-details"]').click()
 
+        // Wait for the delete button to become visible
+        const deleteButton = blogElement.locator('[data-testid="delete-button"]')
+        await expect(deleteButton).toBeVisible()
+
         // Check that the delete button is visible for 'test' user
-        await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(1)
+        await expect(deleteButton).toHaveCount(1)
     })
     
     test('front page can be opened', async ({ page }) => {
