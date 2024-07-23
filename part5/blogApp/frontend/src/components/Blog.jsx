@@ -17,7 +17,9 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
     <li className='blog'>
       <div>
         <strong>Title: {blog.title}</strong> Author: {blog.author}
-        <button onClick={toggleDetails}>
+        <button
+          data-testid='toggle-details'
+          onClick={toggleDetails}>
           {showDetails ? 'Hide' : 'View'}
         </button>
       </div>
@@ -25,9 +27,18 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
         <div>
           <p>{blog.url}</p>
           <p>{blog.votes} Votes</p>
-          <button onClick={() => handleLike(blog.id)}>Like</button>
+          <button
+            data-testid='like-button'
+            onClick={() => handleLike(blog.id)}
+            >Like
+          </button>
           {blog.user && <p>Added by {blog.user.name}</p>}
-          <button onClick={confirmDelete} className="delete-button">Delete</button>
+          <button
+            data-testid='delete-button'
+            onClick={confirmDelete}
+            className="delete-button"
+            >Delete
+          </button>
         </div>
       )}
     </li>

@@ -7,6 +7,7 @@ import loginService from './services/login'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import Blog from './components/Blog'
+import LogoutButton from './components/LogoutButton'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -52,6 +53,14 @@ const App = () => {
     }
   }
 
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
+
+    blogService.setToken(null)
+
+    setUser(null)
+  }
+
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then(returnedBlog => {
@@ -61,17 +70,13 @@ const App = () => {
 
   const likeBlog = async (id) => {
     try {
-      // Find the blog to like and prepare the updated blog object
       const blogToLike = blogs.find(b => b.id === id)
       const likedBlog = { ...blogToLike, votes: blogToLike.votes + 1 }
 
-      // Update the blog on the server
       const updatedBlog = await blogService.update(id, likedBlog)
 
-      // Ensure the updated blog includes user information
       const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
 
-      // Update the state with the sorted array
       setBlogs(blogs.map(b => (b.id === id ? updatedBlogWithUser : b)).sort((a, b) => b.votes - a.votes))
 
     } catch (error) {
@@ -120,6 +125,7 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in</p>
+          <LogoutButton onLogout={handleLogout} />
           <Togglable buttonLabel="New Blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
