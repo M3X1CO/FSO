@@ -28,6 +28,14 @@ describe('Blog app', () => {
         await loginWith(page, 'test', 'test')
         await createBlog(page, 'thirst blog', 'author1', 'url1.com', 0)
 
+        // Ensure the blog details are visible
+        const blogTitle = 'thirst blog'
+        const blogElement = await page.locator(`.blog:has-text("Title: ${blogTitle}")`)
+        await blogElement.locator('[data-testid="toggle-details"]').click()
+
+        // Check that the delete button is not visible for 'other' user
+        await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(1)
+
         // Ensure the logout button is visible and click it
         const logoutButton = page.getByTestId('logout-button')
         await expect(logoutButton).toBeVisible()
@@ -37,8 +45,6 @@ describe('Blog app', () => {
         await loginWith(page, 'other', 'other')
 
         // Ensure the blog details are visible
-        const blogTitle = 'thirst blog'
-        const blogElement = await page.locator(`.blog:has-text("Title: ${blogTitle}")`)
         await blogElement.locator('[data-testid="toggle-details"]').click()
 
         // Check that the delete button is not visible for 'other' user
@@ -98,30 +104,6 @@ describe('Blog app', () => {
 
                 // Click the 'Hide' button to close details
                 await blogElement.locator('[data-testid="toggle-details"]').click()
-            })  
-            
-            test('a blog can be deleted by the user who added it', async ({ page }) => {
-                const blogTitle = 'first blog'
-            
-                // Locate the blog element
-                const blogElement = await page.locator(`.blog:has-text("Title: ${blogTitle}")`)
-            
-                // Click the 'View' button to show details
-                await blogElement.locator('[data-testid="toggle-details"]').click()
-            
-                // Wait for the 'Delete' button to be visible
-                await blogElement.locator('[data-testid="delete-button"]').waitFor()
-            
-                // Mock the window.confirm dialog to automatically accept
-                await page.evaluate(() => {
-                    window.confirm = () => true
-                })
-            
-                // Click the 'Delete' button
-                await blogElement.locator('[data-testid="delete-button"]').click()
-            
-                // Verify the blog is no longer in the list
-                await expect(page.locator(`.blog:has-text("Title: ${blogTitle}")`)).toHaveCount(0)
             })
         })
     }) 

@@ -86,6 +86,9 @@ const App = () => {
 
   const deleteBlog = async id => {
     try {
+      if (!id) {
+        throw new Error('Blog ID is missing')
+      }
       await blogService.remove(id)
       const updatedBlogs = blogs.filter(blog => blog.id !== id)
       setBlogs(updatedBlogs)
