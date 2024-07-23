@@ -1,9 +1,15 @@
-const loginWith = async (page, username, password)  => {
+const loginWith = async (page, username, password) => {
+  const loginFormVisible = await page.locator('[data-testid="login-form"]').isVisible()
+
+  if (!loginFormVisible) {
     await page.getByRole('button', { name: 'log in' }).click()
-    await page.getByTestId('username').fill(username)
-    await page.getByTestId('password').fill(password)
-    await page.getByRole('button', { name: 'login' }).click()
   }
+
+  await page.getByTestId('username').fill(username)
+  await page.getByTestId('password').fill(password)
+  await page.getByRole('button', { name: 'login' }).click()
+}
+
 
   const createBlog = async (page, title, author, url, votes) => {
     await page.getByRole('button', { name: 'new blog' }).click()

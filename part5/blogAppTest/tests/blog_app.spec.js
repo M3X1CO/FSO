@@ -28,12 +28,10 @@ describe('Blog app', () => {
         await loginWith(page, 'test', 'test')
         await createBlog(page, 'thirst blog', 'author1', 'url1.com', 0)
 
-        // Log out by navigating back to home page
-        await page.context().clearCookies()
-        await page.evaluate(() => {
-            window.localStorage.clear()
-            window.sessionStorage.clear()
-        })
+        // Ensure the logout button is visible and click it
+        const logoutButton = page.getByTestId('logout-button')
+        await expect(logoutButton).toBeVisible()
+        await logoutButton.click()
 
         // Log in as 'other' user
         await loginWith(page, 'other', 'other')
