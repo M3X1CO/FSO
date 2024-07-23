@@ -14,6 +14,9 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
     }
   }
 
+  console.log('Current User:', currentUser)
+  console.log('Blog User:', blog.user)
+
   return (
     <li className='blog'>
       <div>
