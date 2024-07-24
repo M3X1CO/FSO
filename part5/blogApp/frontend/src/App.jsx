@@ -65,7 +65,9 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then(returnedBlog => {
-      setBlogs(prevBlogs => [...prevBlogs, returnedBlog].sort((a, b) => b.votes - a.votes))
+      // Add the current user to the returned blog
+      const blogWithUser = { ...returnedBlog, user: user }
+      setBlogs(prevBlogs => [...prevBlogs, blogWithUser].sort((a, b) => b.votes - a.votes))
     })
   }
 
