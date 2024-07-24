@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 const BlogDetails = ({ blog, handleLike, handleDelete, currentUser }) => (
   <div className="blog-details">
     <p>URL: {blog.url}</p>
-    <p>Votes: {blog.votes} <button data-testid='like-button' onClick={() => handleLike(blog.id)}>Like</button></p>
+    <p>Votes: <span data-testid="like-count">{blog.votes}</span><button data-testid='like-button' onClick={() => handleLike(blog.id)}>Like</button></p>
     {blog.user && <p>Added by {blog.user.name}</p>}
     {currentUser && blog.user && currentUser.username === blog.user.username && (
       <button

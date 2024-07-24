@@ -55,87 +55,50 @@ describe('Blog app', () => {
                 await createBlog(page, 'second blog', 'author2', 'url2.com', 0)
                 await createBlog(page, 'third blog', 'author3', 'url3.com', 0)
             })
-
-            test('only the user who added the blog sees the delete button', async ({ page }) => {
-                await page.pause() // Pause for manual inspection if needed
             
-                // Ensure the user is logged out and log in as 'test'
-                const logoutButton = page.getByTestId('logout-button')
-                await expect(logoutButton).toBeVisible()
-                await logoutButton.click()
-            
-                // Login as 'test' user
-                await loginWith(page, 'test', 'test')
-            
-                // Wait for the page to be fully loaded
-                await page.waitForLoadState('networkidle')
-            
-                const blogTitle = 'first blog'
-                const blogElement = await page.locator(`.blog:has-text("Title: ${blogTitle}")`)
-                
-                // Set a mock current user in localStorage
-                const mockCurrentUser = {
-                    username: 'test', // Ensure this matches your actual test user
-                    token: 'testToken' // You may need an actual token or relevant value
-                }
-                await page.evaluate((user) => {
-                    window.localStorage.setItem('currentUser', JSON.stringify(user))
-                }, mockCurrentUser)
-                
-                // Retrieve and log the current user from localStorage
-                const currentUser = await page.evaluate(() => {
-                    return JSON.parse(window.localStorage.getItem('currentUser'))
-                })
-                console.log('Current User:', currentUser)
-                
-                // Get the blog's user name
-                const blogUserId = await blogElement.evaluate(el => {
-                    const deleteButton = el.querySelector('[data-testid="delete-button"]')
-                    return deleteButton ? deleteButton.getAttribute('data-user-id') : null
-                })
-                console.log('Blog User ID:', blogUserId)
-
-                // Fetch user details from backend
-                const userResponse = await page.request.get(`/api/users/${blogUserId}`)
-                const blogUser = await userResponse.json()
-                console.log('Blog User:', blogUser)
-                
-                // Ensure blog details are visible
-                await blogElement.locator('[data-testid="toggle-details"]').click()
-
-                // Log the entire blogElement HTML
-                const blogHtml = await blogElement.evaluate(el => el.outerHTML)
-                console.log('Blog Element HTML:', blogHtml)
-
-                // Check if the delete button is visible for the logged-in user
-                if (currentUser.username === blogUser.username) {
-                    await expect(blogElement.locator('[data-testid="delete-button"]')).toBeVisible()
-                } else {
-                    await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(0)
-                }
-            
-                // Log out and log in as 'other' user
-                await page.getByTestId('logout-button').click()
+            test('users can only delete their own blogs', async ({ page }) => {
+                await page.pause()
+                // Create a blog as 'test' user
+                await createBlog(page, 'Test User Blog', 'Test Author', 'http://testblog.com', 0)
+              
+                // Verify the blog is visible and can be deleted
+                const testBlogElement = await page.locator('.blog:has-text("Title: Test User Blog")')
+                await expect(testBlogElement).toBeVisible()
+                await testBlogElement.locator('[data-testid="toggle-details"]').click()
+                await expect(testBlogElement.locator('[data-testid="delete-button"]')).toBeVisible()
+              
+                // Log out
+                await page.locator('[data-testid="logout-button"]').click()
+              
+                // Log in as 'other' user
                 await loginWith(page, 'other', 'other')
-            
-                // Wait for the page to be fully loaded again
-                await page.waitForLoadState('networkidle')
-            
-                // Ensure the blog details are visible
-                await blogElement.locator('[data-testid="toggle-details"]').click()
-            
-                // Get the new blog's user name (should be the same blog but viewed by 'other' user)
-                const newBlogUser = await blogElement.evaluate(el => {
-                    const deleteButton = el.querySelector('[data-testid="delete-button"]')
-                    return deleteButton ? deleteButton.getAttribute('data-user') : null
-                })
-                console.log('New Blog User:', newBlogUser)
-            
-                // Check if the delete button is visible for the 'other' user
-                await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(0)
-            })            
+              
+                // Verify the blog created by 'test' user is visible but cannot be deleted
+                const otherUserView = await page.locator('.blog:has-text("Title: Test User Blog")')
+                await expect(otherUserView).toBeVisible()
+                await otherUserView.locator('[data-testid="toggle-details"]').click()
+                await expect(otherUserView.locator('[data-testid="delete-button"]')).not.toBeVisible()
+              
+                // Log out
+                await page.locator('[data-testid="logout-button"]').click()
+              
+                // Log back in as 'test' user
+                await loginWith(page, 'test', 'test')
+              
+                // Delete the blog
+                const blogToDelete = await page.locator('.blog:has-text("Title: Test User Blog")')
+                await blogToDelete.locator('[data-testid="toggle-details"]').click()
+                
+                // Handle the confirmation dialog
+                page.on('dialog', dialog => dialog.accept())
+                await blogToDelete.locator('[data-testid="delete-button"]').click()
+              
+                // Verify the blog has been deleted
+                await expect(page.locator('.blog:has-text("Title: Test User Blog")')).not.toBeVisible()
+              })
         
             test('a blog can be liked', async ({ page }) => {
+                await page.pause()
                 const blogTitle = 'second blog'
                 
                 // Locate the blog element
@@ -151,10 +114,50 @@ describe('Blog app', () => {
                 await blogElement.locator('[data-testid="like-button"]').click()
                 
                 // Verify the like count has increased
-                await expect(blogElement.locator('p', { hasText: /Votes/ })).toContainText('1 Votes')
+                await expect(blogElement.locator('p', { hasText: /Votes/ })).toContainText('Votes: 1')
 
                 // Click the 'Hide' button to close details
                 await blogElement.locator('[data-testid="toggle-details"]').click()
+            })
+
+            test('blogs are ordered by likes in descending order', async ({ page }) => {
+                // Create blogs with different numbers of likes
+                await createBlog(page, 'Least liked blog', 'Author1', 'http://blog1.com', 2)
+                await createBlog(page, 'Most liked blog', 'Author2', 'http://blog2.com', 5)
+                await createBlog(page, 'Medium liked blog', 'Author3', 'http://blog3.com', 3)
+              
+                // Wait for all blogs to be visible and for the page to stabilize
+                await page.waitForSelector('.blog')
+                await page.waitForTimeout(1000) // Wait for potential re-ordering
+              
+                // Function to extract likes from a blog element
+                const getLikes = async (element) => {
+                  await element.locator('[data-testid="toggle-details"]').click()
+                  const likesElement = element.locator('[data-testid="like-count"]')
+                  await likesElement.waitFor({ state: 'visible' })
+                  const likesText = await likesElement.textContent()
+                  await element.locator('[data-testid="toggle-details"]').click() // Hide details again
+                  const likes = parseInt(likesText.match(/\d+/)[0])
+                  console.log(`Extracted likes: ${likes}`) // For debugging
+                  return likes
+                }
+              
+                // Get all blog elements
+                const blogElements = await page.locator('.blog').all()
+              
+                // Extract likes for all blogs
+                const blogLikes = await Promise.all(blogElements.map(getLikes))
+              
+                // Check if blogs are in descending order of likes
+                for (let i = 0; i < blogLikes.length - 1; i++) {
+                  expect(blogLikes[i]).toBeGreaterThanOrEqual(blogLikes[i + 1])
+                }
+              
+                // Verify the order of blog titles
+                const blogTitles = await page.locator('.blog').allTextContents()
+                expect(blogTitles[0]).toContain('Most liked blog')
+                expect(blogTitles[1]).toContain('Medium liked blog')
+                expect(blogTitles[2]).toContain('Least liked blog')
             })
         })
     }) 
