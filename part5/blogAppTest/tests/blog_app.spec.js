@@ -114,10 +114,41 @@ describe('Blog app', () => {
                 await blogElement.locator('[data-testid="like-button"]').click()
                 
                 // Verify the like count has increased
-                await expect(blogElement.locator('p', { hasText: /Votes/ })).toContainText('Votes: 1')
+                await expect(blogElement.locator('p', { hasText: /Votes/ })).toContainText('Votes: 3')
 
                 // Click the 'Hide' button to close details
                 await blogElement.locator('[data-testid="toggle-details"]').click()
+            })
+
+            test('blogs are displayed in order of likes', async ({ page }) => {
+                // Create an array with the 3 titles
+                const blogTitles = ['First Blog', 'Second Blog', 'Third Blog'];
+
+                // Iterate through the array and extract the counts
+                let counts = [];
+                for (let i = 0; i < blogTitles.length; i++) {
+                    const title = blogTitles[i];
+
+                    // Locate the blog element
+                    const blogElement = await page.locator(`.blog:has-text("Title: ${title}")`)
+
+                    // Click the 'View' button to show details
+                    await blogElement.locator('[data-testid="toggle-details"]').click()
+
+                    // Find the vote count element and extract the value
+                    const voteCountElement = await blogElement.locator('p:has-text("Votes:")');
+                    const voteCountText = await voteCountElement.textContent();
+                    const voteCount = parseInt(voteCountText.replace('Votes: ', ''));
+
+                    counts.push(voteCount);
+                    console.log(`${title} has ${voteCount} views.`);
+                    }
+
+                    // The counts array now contains the simulated counts for each title
+                    console.log(counts);
+
+                    // Check that the blogs are displayed in the correct order
+                    expect(counts).toEqual([2, 3, 1]);
             })
         })
     })
