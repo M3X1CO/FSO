@@ -40,6 +40,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
           {currentUser && blog.user && currentUser.username === blog.user.username && (
             <button
               data-testid='delete-button'
+              data-user-id={blog.user}
               onClick={confirmDelete}
               className="delete-button">
               Delete
