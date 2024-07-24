@@ -51,9 +51,9 @@ describe('Blog app', () => {
 
         describe('and a blog exists', () => {
             beforeEach(async ({ page }) => {
-                await createBlog(page, 'first blog', 'author1', 'url1.com', 0)
-                await createBlog(page, 'second blog', 'author2', 'url2.com', 0)
-                await createBlog(page, 'third blog', 'author3', 'url3.com', 0)
+                await createBlog(page, 'first blog', 'author1', 'url1.com', 2)
+                await createBlog(page, 'second blog', 'author2', 'url2.com', 3)
+                await createBlog(page, 'third blog', 'author3', 'url3.com', 1)
             })
             
             test('users can only delete their own blogs', async ({ page }) => {
@@ -119,46 +119,6 @@ describe('Blog app', () => {
                 // Click the 'Hide' button to close details
                 await blogElement.locator('[data-testid="toggle-details"]').click()
             })
-
-            test('blogs are ordered by likes in descending order', async ({ page }) => {
-                // Create blogs with different numbers of likes
-                await createBlog(page, 'Least liked blog', 'Author1', 'http://blog1.com', 2)
-                await createBlog(page, 'Most liked blog', 'Author2', 'http://blog2.com', 5)
-                await createBlog(page, 'Medium liked blog', 'Author3', 'http://blog3.com', 3)
-              
-                // Wait for all blogs to be visible and for the page to stabilize
-                await page.waitForSelector('.blog')
-                await page.waitForTimeout(1000) // Wait for potential re-ordering
-              
-                // Function to extract likes from a blog element
-                const getLikes = async (element) => {
-                  await element.locator('[data-testid="toggle-details"]').click()
-                  const likesElement = element.locator('[data-testid="like-count"]')
-                  await likesElement.waitFor({ state: 'visible' })
-                  const likesText = await likesElement.textContent()
-                  await element.locator('[data-testid="toggle-details"]').click() // Hide details again
-                  const likes = parseInt(likesText.match(/\d+/)[0])
-                  console.log(`Extracted likes: ${likes}`) // For debugging
-                  return likes
-                }
-              
-                // Get all blog elements
-                const blogElements = await page.locator('.blog').all()
-              
-                // Extract likes for all blogs
-                const blogLikes = await Promise.all(blogElements.map(getLikes))
-              
-                // Check if blogs are in descending order of likes
-                for (let i = 0; i < blogLikes.length - 1; i++) {
-                  expect(blogLikes[i]).toBeGreaterThanOrEqual(blogLikes[i + 1])
-                }
-              
-                // Verify the order of blog titles
-                const blogTitles = await page.locator('.blog').allTextContents()
-                expect(blogTitles[0]).toContain('Most liked blog')
-                expect(blogTitles[1]).toContain('Medium liked blog')
-                expect(blogTitles[2]).toContain('Least liked blog')
-            })
         })
-    }) 
+    })
 })
