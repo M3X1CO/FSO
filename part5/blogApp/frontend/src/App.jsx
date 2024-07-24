@@ -29,11 +29,13 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    blogService.getAll().then(initialBlogs => {
-      initialBlogs.sort((a, b) => b.votes - a.votes)
-      setBlogs(initialBlogs)
-    })
-  }, [])
+    if (user) {
+      blogService.getAll().then(initialBlogs => {
+        initialBlogs.sort((a, b) => b.votes - a.votes)
+        setBlogs(initialBlogs)
+      })
+    }
+  }, [user])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -55,16 +57,15 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
-
     blogService.setToken(null)
-
     setUser(null)
+    setBlogs([]) // Clear blogs when logging out
   }
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog))
+      setBlogs(prevBlogs => [...prevBlogs, returnedBlog].sort((a, b) => b.votes - a.votes))
     })
   }
 
@@ -77,7 +78,10 @@ const App = () => {
 
       const updatedBlogWithUser = { ...updatedBlog, user: blogToLike.user }
 
-      setBlogs(blogs.map(b => (b.id === id ? updatedBlogWithUser : b)).sort((a, b) => b.votes - a.votes))
+      setBlogs(prevBlogs => 
+        prevBlogs.map(b => (b.id === id ? updatedBlogWithUser : b))
+          .sort((a, b) => b.votes - a.votes)
+      )
 
     } catch (error) {
       console.error('Error liking blog:', error)
@@ -90,35 +94,23 @@ const App = () => {
         throw new Error('Blog ID is missing')
       }
       await blogService.remove(id)
-      const updatedBlogs = blogs.filter(blog => blog.id !== id)
-      setBlogs(updatedBlogs)
+      setBlogs(prevBlogs => prevBlogs.filter(blog => blog.id !== id))
     } catch (error) {
       console.error('Error deleting blog:', error)
     }
   }
 
-  const loginForm = () => {
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
+  const loginForm = () => (
+    <Togglable buttonLabel="log in">
+      <LoginForm
+        username={username}
+        password={password}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        handleSubmit={handleLogin}
+      />
+    </Togglable>
+  )
 
   return (
     <div>

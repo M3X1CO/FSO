@@ -20,7 +20,7 @@ describe('Blog app', () => {
             }
         })
 
-        // await page.goto('/')
+        await page.goto('/')
     })
 
     test('front page can be opened', async ({ page }) => {
