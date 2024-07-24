@@ -35,25 +35,51 @@ blogsRouter.put('/:id', async (request, response, next) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const { author, title, url, votes } = request.body
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
+  try {
+    const { author, title, url, votes } = request.body
+    console.log('Request body:', request.body)
 
-  if (!decodedToken.id) {
+    const token = getTokenFrom(request)
+    console.log('Token:', token)
+    if (!token) {
+      return response.status(401).json({ error: 'token missing' })
+    }
 
-    return response.status(401).json({ error: 'token invalid' })
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    console.log('Decoded token:', decodedToken)
 
+    if (!decodedToken || !decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+    console.log('User:', user)
+
+    if (!user) {
+      return response.status(401).json({ error: 'user not found' })
+    }
+
+    const blog = new Blog({
+      author,
+      title,
+      url,
+      votes,
+      user: user._id
+    })
+    console.log('Blog to be saved:', blog)
+
+    const savedBlog = await blog.save()
+    console.log('Saved blog:', savedBlog)
+
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+
+    response.status(201).json(savedBlog)
+  } catch (error) {
+    console.error('Error creating blog:', error)
+    response.status(500).json({ error: 'internal server error' })
   }
-
-  const user = await User.findById(decodedToken.id)
-
-  const blog = new Blog({
-    author,
-    title,
-    url,
-    votes,
-    user: user._id
-  })
+})
 
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
@@ -63,13 +89,19 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
-  if (blog) {
-    response.json(blog)
-  } else {
-    response.status(404).end()
+  try {
+    const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
+    if (blog) {
+      response.json(blog)
+    } else {
+      response.status(404).end()
+    }
+  } catch (error) {
+    console.error('Error fetching blog:', error)
+    response.status(500).json({ error: 'internal server error' })
   }
 })
+
 
 blogsRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)

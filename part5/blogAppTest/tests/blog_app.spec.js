@@ -23,34 +23,6 @@ describe('Blog app', () => {
         await page.goto('/')
     })
 
-    test('only the user who added the blog sees the delete button', async ({ page }) => {
-        // Log in as 'test' user and create a blog
-        await loginWith(page, 'test', 'test')
-        await createBlog(page, 'thirst blog', 'author1', 'url1.com', 0)
-
-        // Ensure the blog details are visible
-        const blogTitle = 'thirst blog'
-        const blogElement = await page.locator(`.blog:has-text("Title: ${blogTitle}")`)
-        await blogElement.locator('[data-testid="toggle-details"]').click()
-
-        // Check that the delete button is not visible for 'other' user
-        await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(1)
-
-        // Ensure the logout button is visible and click it
-        const logoutButton = page.getByTestId('logout-button')
-        await expect(logoutButton).toBeVisible()
-        await logoutButton.click()
-
-        // Log in as 'other' user
-        await loginWith(page, 'other', 'other')
-
-        // Ensure the blog details are visible
-        await blogElement.locator('[data-testid="toggle-details"]').click()
-
-        // Check that the delete button is not visible for 'other' user
-        await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(0)
-    })
-    
     test('front page can be opened', async ({ page }) => {
         const locator = await page.getByText('Blogs')
         await expect(locator).toBeVisible()
@@ -68,7 +40,7 @@ describe('Blog app', () => {
         await expect(errorDiv).toContainText('Wrong Credentials')
         await expect(errorDiv).toHaveCSS('border-style', 'solid')
         await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
-
+        
         await expect(page.getByText('test logged in')).not.toBeVisible()
     })
 
@@ -82,6 +54,35 @@ describe('Blog app', () => {
                 await createBlog(page, 'first blog', 'author1', 'url1.com', 0)
                 await createBlog(page, 'second blog', 'author2', 'url2.com', 0)
                 await createBlog(page, 'third blog', 'author3', 'url3.com', 0)
+            })
+
+            test('only the user who added the blog sees the delete button', async ({ page }) => {
+                const blogTitle = 'first blog'
+                const blogElement = await page.locator(`.blog:has-text("Title: ${blogTitle}")`)
+                await blogElement.locator('[data-testid="toggle-details"]').click()
+
+                // Log current user and blog user before checking the delete button visibility
+                const currentUser = await page.evaluate(() => window.localStorage.getItem('currentUser'))
+                console.log('Current User:', currentUser)
+                const blogUser = await blogElement.evaluate(el => el.querySelector('[data-testid="delete-button"]')?.getAttribute('data-user'))
+                console.log('Blog User:', blogUser)
+        
+                // Check that the delete button is not visible for 'other' user
+                await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(1)
+        
+                // Ensure the logout button is visible and click it
+                const logoutButton = page.getByTestId('logout-button')
+                await expect(logoutButton).toBeVisible()
+                await logoutButton.click()
+        
+                // Log in as 'other' user
+                await loginWith(page, 'other', 'other')
+        
+                // Ensure the blog details are visible
+                await blogElement.locator('[data-testid="toggle-details"]').click()
+        
+                // Check that the delete button is not visible for 'other' user
+                await expect(blogElement.locator('[data-testid="delete-button"]')).toHaveCount(0)
             })
         
             test('a blog can be liked', async ({ page }) => {
