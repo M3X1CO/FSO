@@ -10,7 +10,7 @@
     "build:ui": "rm -rf dist && cd ../frontend && npm run build && cp -r dist ../backend",
     "deploy:full": "npm update && (cd ../frontend && npm install && cd ../backend && npm install && npm run build:ui && cd ../../../ && git add . && git commit -m uibuild && git push)",
     "lint": "eslint .",
-    "start:test": "NODE_ENV=test node index.js"
+    "start:test": "cross-env NODE_ENV=test node index.js"
   },
   "author": "",
   "license": "ISC",
